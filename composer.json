@@ -1,0 +1,16 @@
+{
+    "name": "dflydev/hawk",
+    "autoload": {
+        "psr-0": {
+	        "Dflydev\\Hawk": "src"
+        }
+    },
+    "require": {
+        "ircmaxell/random-lib": "dev-master",
+
+        "ircmaxell/security-lib": "dev-master"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "3.7.21"
+    }
+}
