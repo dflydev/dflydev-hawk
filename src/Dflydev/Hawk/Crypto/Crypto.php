@@ -24,7 +24,7 @@ class Crypto
     {
         $normalized = $this->generateNormalizedString($type, $attributes);
 
-        return base64_encode(hash_hmac($credentials->algorithm(), $normalized, $credentials->key()));
+        return base64_encode(hash_hmac($credentials->algorithm(), $normalized, $credentials->key(), true));
     }
 
     public function calculateTsMac($ts, CredentialsInterface $credentials)
@@ -35,7 +35,8 @@ class Crypto
         return base64_encode(hash_hmac(
             $credentials->algorithm(),
             $normalized,
-            $credentials->key()
+            $credentials->key(),
+            true
         ));
     }
 
