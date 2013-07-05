@@ -17,7 +17,7 @@ class Crypto
             $contentType."\n".
             $payload."\n";
 
-        return base64_encode(hash($algorithm, $normalized));
+        return base64_encode(hash($algorithm, $normalized, true));
     }
 
     public function calculateMac($type, CredentialsInterface $credentials, Artifacts $attributes)
