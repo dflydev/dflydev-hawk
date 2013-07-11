@@ -6,24 +6,25 @@ use Dflydev\Hawk\Crypto\Crypto;
 use Dflydev\Hawk\Time\DefaultTimeProviderFactory;
 use Dflydev\Hawk\Time\TimeProviderInterface;
 
-class AuthenticatorBuilder
+class ServerBuilder
 {
     private $crypto;
-    private $timeProvider;
     private $credentialsCallback;
+    private $timeProvider;
     private $nonceCallback;
     private $timestampSkewSec;
-    private $localtimeOffsetMsec;
+    private $localtimeOffsetSec;
 
-    public function __construct(Crypto $crypto, $credentialsCallback)
+    public function __construct($credentialsCallback)
+    {
+        $this->credentialsCallback = $credentialsCallback;
+    }
+
+    public function setCrypto(Crypto $crypto)
     {
         $this->crypto = $crypto;
-        $this->timeProvider = DefaultTimeProviderFactory::create();
-        $this->credentialsCallback = $credentialsCallback;
 
-        $this->nonceCallback = function ($nonce, $timestamp) {
-            return true;
-        };
+        return $this;
     }
 
     public function setTimeProvider(TimeProviderInterface $timeProvider)
@@ -47,25 +48,35 @@ class AuthenticatorBuilder
         return $this;
     }
 
-    public function setLocaltimeOffsetMsec($localtimeOffsetMsec = null)
+    public function setLocaltimeOffsetSec($localtimeOffsetSec = null)
     {
-        $this->localtimeOffsetMsec = $localtimeOffsetMsec;
+        $this->localtimeOffsetSec = $localtimeOffsetSec;
 
         return $this;
     }
 
     public function build()
     {
+        $crypto = $this->crypto ?: new Crypto;
+        $timeProvider = $this->timeProvider ?: DefaultTimeProviderFactory::create();
+        $nonceCallback = $this->nonceCallback ?: function ($nonce, $timestamp) {
+            return true;
+        };
         $timestampSkewSec = $this->timestampSkewSec ?: 60;
-        $localtimeOffsetMsec = $this->localtimeOffsetMsec ?: 0;
+        $localtimeOffsetSec = $this->localtimeOffsetSec ?: 0;
 
-        return new Authenticator(
-            $this->crypto,
-            $this->timeProvider,
+        return new Server(
+            $crypto,
             $this->credentialsCallback,
-            $this->nonceCallback,
+            $timeProvider,
+            $nonceCallback,
             $timestampSkewSec,
-            $localtimeOffsetMsec
+            $localtimeOffsetSec
         );
+    }
+
+    public static function create($credentialsCallback)
+    {
+        return new static($credentialsCallback);
     }
 }

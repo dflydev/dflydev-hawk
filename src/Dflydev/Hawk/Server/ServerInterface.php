@@ -7,7 +7,7 @@ use Dflydev\Hawk\Crypto\Artifacts;
 
 interface ServerInterface
 {
-    public function createAuthenticatorBuilder($credentialsCallback);
+    public function authenticate(Request $request);
     public function createHeaderBuilder(CredentialsInterface $credentials, Artifacts $artifacts);
     public function authenticatePayload(
         CredentialsInterface $credentials,
