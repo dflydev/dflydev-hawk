@@ -6,5 +6,11 @@ use Dflydev\Hawk\Credentials\CredentialsInterface;
 
 interface ClientInterface
 {
-    public function createHeader(CredentialsInterface $credentials, $uri, $method, array $options = array());
+    public function createRequest(CredentialsInterface $credentials, $uri, $method, array $options = array());
+    public function authenticateResponse(
+        CredentialsInterface $credentials,
+        Request $request,
+        $headerObjectOrString,
+        array $options = array()
+    );
 }

@@ -135,9 +135,56 @@ class Server implements ServerInterface
         return array($credentials, $artifacts);
     }
 
-    public function createHeaderBuilder(CredentialsInterface $credentials, Artifacts $artifacts)
+    public function createHeader(CredentialsInterface $credentials, Artifacts $artifacts, array $options = array())
     {
-        return new HeaderBuilder($this->crypto, $credentials, $artifacts);
+        if (isset($options['payload']) || isset($options['content_type'])) {
+            if (isset($options['payload']) && isset($options['content_type'])) {
+                $payload = $options['payload'];
+                $contentType = $options['content_type'];
+                $hash = $this->crypto->calculatePayloadHash($payload, $credentials->algorithm(), $contentType);
+            } else {
+                throw new \InvalidArgumentException(
+                    "If one of 'payload' and 'content_type' are specified, both must be specified."
+                );
+            }
+        } else {
+            $payload = null;
+            $contentType = null;
+            $hash = null;
+        }
+
+        $ext = isset($options['ext']) ? $options['ext'] : null;
+        $app = isset($options['app']) ? $options['app'] : null;
+        $dlg = isset($options['dlg']) ? $options['dlg'] : null;
+
+        $responseArtifacts = new Artifacts(
+            $artifacts->method(),
+            $artifacts->host(),
+            $artifacts->port(),
+            $artifacts->resource(),
+            $artifacts->timestamp(),
+            $artifacts->nonce(),
+            $ext,
+            $payload,
+            $contentType,
+            $hash,
+            $app,
+            $dlg
+        );
+
+        $attributes = array(
+            'mac' => $this->crypto->calculateMac('response', $credentials, $responseArtifacts),
+        );
+
+        if ($hash) {
+            $attributes['hash'] = $hash;
+        }
+
+        if ($ext) {
+            $attributes['ext'] = $ext;
+        }
+
+        return HeaderFactory::create('Server-Authorization', $attributes);
     }
 
     public function authenticatePayload(

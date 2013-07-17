@@ -5,6 +5,7 @@ namespace Dflydev\Hawk\Client;
 use Dflydev\Hawk\Credentials\CredentialsInterface;
 use Dflydev\Hawk\Crypto\Artifacts;
 use Dflydev\Hawk\Crypto\Crypto;
+use Dflydev\Hawk\Header\Header;
 use Dflydev\Hawk\Header\HeaderFactory;
 use Dflydev\Hawk\Nonce\NonceProviderInterface;
 use Dflydev\Hawk\Time\TimeProviderInterface;
@@ -25,7 +26,7 @@ class Client implements ClientInterface
         $this->localtimeOffset = $localtimeOffset;
     }
 
-    public function createHeader(CredentialsInterface $credentials, $uri, $method, array $options = array())
+    public function createRequest(CredentialsInterface $credentials, $uri, $method, array $options = array())
     {
         $timestamp = isset($options['timestamp']) ? $options['timestamp'] : $this->timeProvider->createTimestamp();
         if ($this->localtimeOffset) {
@@ -94,6 +95,72 @@ class Client implements ClientInterface
             $attributes['ext'] = $ext;
         }
 
-        return HeaderFactory::create('Authorization', $attributes);
+        return new Request(HeaderFactory::create('Authorization', $attributes), $artifacts);
+    }
+
+    public function authenticateResponse(
+        CredentialsInterface $credentials,
+        Request $request,
+        $headerObjectOrString,
+        array $options = array()
+    ) {
+        if (is_string($headerObjectOrString)) {
+            $header = HeaderFactory::createFromString('Server-Authorization', $headerObjectOrString);
+        } elseif ($headerObjectOrString instanceof Header) {
+            $header = $headerObjectOrString;
+        } else {
+            throw new \InvalidArgumentException(
+                "Header must either be a string or an instance of 'Dflydev\Hawk\Header\Header'"
+            );
+        }
+
+        if (isset($options['payload']) || isset($options['content_type'])) {
+            if (isset($options['payload']) && isset($options['content_type'])) {
+                $payload = $options['payload'];
+                $contentType = $options['content_type'];
+            } else {
+                throw new \InvalidArgumentException(
+                    "If one of 'payload' and 'content_type' are specified, both must be specified."
+                );
+            }
+        } else {
+            $payload = null;
+            $contentType = null;
+        }
+
+        if ($ts = $header->attribute('ts')) {
+            // do something with ts
+        }
+
+        $artifacts = new Artifacts(
+            $request->artifacts()->method(),
+            $request->artifacts()->host(),
+            $request->artifacts()->port(),
+            $request->artifacts()->resource(),
+            $request->artifacts()->timestamp(),
+            $request->artifacts()->nonce(),
+            $header->attribute('ext'),
+            $payload,
+            $contentType,
+            $header->attribute('hash'),
+            $request->artifacts()->app(),
+            $request->artifacts()->dlg()
+        );
+
+        $mac = $this->crypto->calculateMac('response', $credentials, $artifacts);
+        if ($header->attribute('mac') !== $mac) {
+            return false;
+        }
+
+        if (!$payload) {
+            return true;
+        }
+
+        if (!$artifacts->hash()) {
+            return false;
+        }
+
+        $hash = $this->crypto->calculatePayloadHash($payload, $credentials->algorithm(), $contentType);
+        return $artifacts->hash() === $hash;
     }
 }
