@@ -31,7 +31,7 @@ class Server implements ServerInterface
         $this->timeProvider = $timeProvider;
         $this->nonceCallback = $nonceCallback;
         $this->timestampSkewSec = $timestampSkewSec;
-        $this->localtimeOffsetSec;
+        $this->localtimeOffsetSec = $localtimeOffsetSec;
     }
 
     public function createRequest(
