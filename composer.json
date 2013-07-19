@@ -2,7 +2,7 @@
     "name": "dflydev/hawk",
     "autoload": {
         "psr-0": {
-	        "Dflydev\\Hawk": "src"
+            "Dflydev\\Hawk": "src"
         }
     },
     "require": {
