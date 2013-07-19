@@ -1,6 +1,6 @@
 <?php
 
-namespace Dflydev\Hawk\Crypto;
+namespace Dflydev\Hawk\Nonce;
 
 use RandomLib\Factory;
 

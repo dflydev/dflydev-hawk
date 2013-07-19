@@ -2,7 +2,7 @@
 
 namespace Dflydev\Hawk\Client;
 
-use Dflydev\Hawk\Crypto\NonceProviderInterface;
+use Dflydev\Hawk\Nonce\NonceProviderInterface;
 use Dflydev\Hawk\Time\TimeProviderInterface;
 
 class ClientTest extends \PHPUnit_Framework_TestCase
@@ -39,74 +39,52 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     }
 
     /** @test */
-    public function shouldReturnHeaderBuilder()
+    public function builderShouldBuildClient()
     {
-        $credentials = $this->createMockCredentials();
-        $crypto = $this->createMockCrypto();
-
-        $client = new Client($crypto);
-
-        $headerBuilder = $client->createHeaderBuilder($credentials, 'http://example.com', 'GET');
-
-        $this->assertInstanceOf('Dflydev\Hawk\Client\HeaderBuilder', $headerBuilder);
+        $client = ClientBuilder::create()->build();
     }
 
     /** @test */
-    public function shouldBeAbleToBuildHeader()
+    public function shouldCreateRequest()
     {
-        $credentials = $this->createMockCredentials();
         $crypto = $this->createMockCrypto();
-
-        $client = new Client($crypto);
-
-        $header = $client
-            ->createHeaderBuilder($credentials, 'http://example.com', 'GET')
-            ->build();
-
-        $this->assertInstanceOf('Dflydev\Hawk\Header\Header', $header);
-    }
-
-    /** @test */
-    public function shouldCreateExpectedHeader()
-    {
         $credentials = $this->createMockCredentials();
-        $crypto = $this->createMockCrypto();
-
-        $artifacts = new \Dflydev\Hawk\Crypto\Artifacts(
-            'GET',
-            'example.com',
-            '80',
-            '',
-            12345,
-            'mocked-nonce'
-        );
 
         $crypto
             ->expects($this->once())
             ->method('calculateMac')
-            ->with('header', $credentials, $artifacts)
-            ->will($this->returnValue('ab12ccff'));
+            ->will($this->returnValue('macasdf'));
 
-        $client = new Client($crypto);
+        $mockTimeProvider = new MockTimeProvider(123456789);
+        $mockNonceProvider = new MockNonceProvider('asdf1234');
 
-        $header = $client
-            ->createHeaderBuilder($credentials, 'http://example.com', 'GET')
-            ->setNonceProvider(new MockNonceProvider('mocked-nonce'))
-            ->setTimeProvider(new MockTimeProvider('12345'))
+        $client = ClientBuilder::create()
+            ->setCrypto($crypto)
+            ->setTimeProvider($mockTimeProvider)
+            ->setNonceProvider($mockNonceProvider)
             ->build();
 
-        // String based assertions
-        $this->assertEquals("Authorization", $header->fieldName());
-        $this->assertEquals(
-            'Hawk id="1234", ts="12345", nonce="mocked-nonce", mac="ab12ccff"',
-            $header->fieldValue()
-        );
+        $request = $client->createRequest($credentials, 'http://example.com/sample.json', 'GET');
+        $this->assertEquals(1234, $request->header()->attribute('id'));
+        $this->assertEquals(123456789, $request->header()->attribute('ts'));
+        $this->assertEquals('asdf1234', $request->header()->attribute('nonce'));
+        $this->assertEquals('macasdf', $request->header()->attribute('mac'));
+    }
 
-        // Attribute based assertions
-        $this->assertEquals('1234', $header->attribute('id'));
-        $this->assertEquals('12345', $header->attribute('ts'));
-        $this->assertEquals('mocked-nonce', $header->attribute('nonce'));
-        $this->assertEquals('ab12ccff', $header->attribute('mac'));
+    /** @test */
+    public function shouldOffsetTs()
+    {
+        $credentials = $this->createMockCredentials();
+
+        $mockTimeProvider = new MockTimeProvider(123456789);
+
+        $client = ClientBuilder::create()
+            ->setTimeProvider($mockTimeProvider)
+            ->setLocaltimeOffset(100)
+            ->build();
+
+        $request = $client->createRequest($credentials, 'http://example.com/sample.json', 'GET');
+        $this->assertEquals(123456789 + 100, $request->header()->attribute('ts'));
     }
 }
 
