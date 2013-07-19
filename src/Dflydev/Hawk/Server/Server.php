@@ -34,7 +34,7 @@ class Server implements ServerInterface
         $this->localtimeOffsetSec = $localtimeOffsetSec;
     }
 
-    public function createRequest(
+    public function authenticate(
         $method,
         $host,
         $port,
@@ -55,45 +55,32 @@ class Server implements ServerInterface
             throw new UnauthorizedException("Invalid Authorization header");
         }
 
-        return new Request(
-            $method,
-            $host,
-            $port,
-            $resource,
-            $contentType,
-            $payload,
-            $header
-        );
-    }
-
-    public function authenticate(Request $request)
-    {
         // Measure now before any other processing
         $now = $this->timeProvider->createTimestamp() + $this->localtimeOffsetSec;
 
         $artifacts = new Artifacts(
-            $request->method(),
-            $request->host(),
-            $request->port(),
-            $request->resource(),
-            $request->header()->attribute('ts'),
-            $request->header()->attribute('nonce'),
-            $request->header()->attribute('ext'),
-            $request->payload(),
-            $request->contentType(),
-            $request->header()->attribute('hash'),
-            $request->header()->attribute('app'),
-            $request->header()->attribute('dlg')
+            $method,
+            $host,
+            $port,
+            $resource,
+            $header->attribute('ts'),
+            $header->attribute('nonce'),
+            $header->attribute('ext'),
+            $payload,
+            $contentType,
+            $header->attribute('hash'),
+            $header->attribute('app'),
+            $header->attribute('dlg')
         );
 
         $credentials = call_user_func_array(
             $this->credentialsCallback,
-            array($request->header()->attribute('id'))
+            array($header->attribute('id'))
         );
 
         $calculatedMac = $this->crypto->calculateMac('header', $credentials, $artifacts);
 
-        if (!$this->crypto->fixedTimeComparison($calculatedMac, $request->header()->attribute('mac'))) {
+        if (!$this->crypto->fixedTimeComparison($calculatedMac, $header->attribute('mac'))) {
             throw new UnauthorizedException('Bad MAC');
         }
 
@@ -125,14 +112,14 @@ class Server implements ServerInterface
             throw new UnauthorizedException('Invalid nonce');
         }
 
-        if (abs($request->header()->attribute('ts') - $now) > $this->timestampSkewSec) {
+        if (abs($header->attribute('ts') - $now) > $this->timestampSkewSec) {
             $ts = $this->timeProvider->createTimestamp() + $this->localtimeOffsetSec;
             $tsm = $this->crypto->calculateTsMac($ts, $credentials);
 
             throw new UnauthorizedException('Stale timestamp', array('ts' => $ts, 'tsm' => $tsm));
         }
 
-        return array($credentials, $artifacts);
+        return new Response($credentials, $artifacts);
     }
 
     public function createHeader(CredentialsInterface $credentials, Artifacts $artifacts, array $options = array())

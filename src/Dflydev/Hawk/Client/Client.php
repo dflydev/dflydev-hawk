@@ -98,7 +98,7 @@ class Client implements ClientInterface
         return new Request(HeaderFactory::create('Authorization', $attributes), $artifacts);
     }
 
-    public function authenticateResponse(
+    public function authenticate(
         CredentialsInterface $credentials,
         Request $request,
         $headerObjectOrString,

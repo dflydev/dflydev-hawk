@@ -7,7 +7,7 @@ use Dflydev\Hawk\Credentials\CredentialsInterface;
 interface ClientInterface
 {
     public function createRequest(CredentialsInterface $credentials, $uri, $method, array $options = array());
-    public function authenticateResponse(
+    public function authenticate(
         CredentialsInterface $credentials,
         Request $request,
         $headerObjectOrString,
