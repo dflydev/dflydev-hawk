@@ -3,64 +3,164 @@
 namespace Dflydev\Hawk\Client;
 
 use Dflydev\Hawk\Credentials\CredentialsInterface;
+use Dflydev\Hawk\Crypto\Artifacts;
 use Dflydev\Hawk\Crypto\Crypto;
+use Dflydev\Hawk\Header\Header;
+use Dflydev\Hawk\Header\HeaderFactory;
+use Dflydev\Hawk\Nonce\NonceProviderInterface;
+use Dflydev\Hawk\Time\TimeProviderInterface;
 
 class Client implements ClientInterface
 {
     private $crypto;
 
-    public function __construct(Crypto $crypto)
-    {
+    public function __construct(
+        Crypto $crypto,
+        TimeProviderInterface $timeProvider,
+        NonceProviderInterface $nonceProvider,
+        $localtimeOffset
+    ) {
         $this->crypto = $crypto;
+        $this->timeProvider = $timeProvider;
+        $this->nonceProvider = $nonceProvider;
+        $this->localtimeOffset = $localtimeOffset;
     }
 
-    public function createHeader(CredentialsInterface $credentials, $uri, $method, array $options = array())
+    public function createRequest(CredentialsInterface $credentials, $uri, $method, array $options = array())
     {
-        $headerBuilder = $this->createHeaderBuilder($credentials, $uri, $method);
-
-        if (isset($options['time_provider'])) {
-            $headerBuilder->setTimeProvider($options['time_provider']);
+        $timestamp = isset($options['timestamp']) ? $options['timestamp'] : $this->timeProvider->createTimestamp();
+        if ($this->localtimeOffset) {
+            $timestamp += $this->localtimeOffset;
         }
 
-        if (isset($options['nonce_provider'])) {
-            $headerBuilder->setNonceProvider($options['nonce_provider']);
+        $parsed = parse_url($uri);
+        $host = $parsed['host'];
+        $resource = isset($parsed['path']) ? $parsed['path'] : '';
+
+        if (isset($parsed['query'])) {
+            $resource .= '?'.$parsed['query'];
         }
 
-        if (isset($options['ext'])) {
-            $headerBuilder->setExt($options['ext']);
-        }
+        $port = isset($parsed['port']) ? $parsed['port'] : ($parsed['scheme'] === 'https' ? 443 : 80);
 
-        if (isset($options['timestamp'])) {
-            $headerBuilder->setTimestamp($options['timestamp']);
-        }
-
-        if (isset($options['nonce'])) {
-            $headerBuilder->setNonce($options['nonce']);
-        }
-
-        if (isset($options['localtime_offset'])) {
-            $headerBuilder->setLocaltimeOffset($options['localtime_offset']);
-        }
+        $nonce = isset($options['nonce']) ? $options['nonce'] : $this->nonceProvider->createNonce();
 
         if (isset($options['payload']) || isset($options['content_type'])) {
             if (isset($options['payload']) && isset($options['content_type'])) {
-                $headerBuilder->setPayload($options['payload'], $options['content_type']);
+                $payload = $options['payload'];
+                $contentType = $options['content_type'];
+                $hash = $this->crypto->calculatePayloadHash($payload, $credentials->algorithm(), $contentType);
             } else {
                 throw new \InvalidArgumentException(
                     "If one of 'payload' and 'content_type' are specified, both must be specified."
                 );
             }
+        } else {
+            $payload = null;
+            $contentType = null;
+            $hash = null;
         }
 
-        if (isset($options['app']) || isset($options['dlg'])) {
-            $headerBuilder->setApp($options['app'], $options['dlg']);
+        $ext = isset($options['ext']) ? $options['ext'] : null;
+        $app = isset($options['app']) ? $options['app'] : null;
+        $dlg = isset($options['dlg']) ? $options['dlg'] : null;
+
+        $artifacts = new Artifacts(
+            $method,
+            $host,
+            $port,
+            $resource,
+            $timestamp,
+            $nonce,
+            $ext,
+            $payload,
+            $contentType,
+            $hash,
+            $app,
+            $dlg
+        );
+
+        $attributes = array(
+            'id' => $credentials->id(),
+            'ts' => $artifacts->timestamp(),
+            'nonce' => $artifacts->nonce(),
+            'mac' => $this->crypto->calculateMac('header', $credentials, $artifacts),
+        );
+
+        if (null !== $hash) {
+            $attributes['hash'] = $hash;
         }
 
-        return $headerBuilder->build();
+        if (null !== $ext) {
+            $attributes['ext'] = $ext;
+        }
+
+        return new Request(HeaderFactory::create('Authorization', $attributes), $artifacts);
     }
 
-    public function createHeaderBuilder(CredentialsInterface $credentials, $uri, $method)
-    {
-        return new HeaderBuilder($this->crypto, $credentials, $uri, $method);
+    public function authenticate(
+        CredentialsInterface $credentials,
+        Request $request,
+        $headerObjectOrString,
+        array $options = array()
+    ) {
+        if (is_string($headerObjectOrString)) {
+            $header = HeaderFactory::createFromString('Server-Authorization', $headerObjectOrString);
+        } elseif ($headerObjectOrString instanceof Header) {
+            $header = $headerObjectOrString;
+        } else {
+            throw new \InvalidArgumentException(
+                "Header must either be a string or an instance of 'Dflydev\Hawk\Header\Header'"
+            );
+        }
+
+        if (isset($options['payload']) || isset($options['content_type'])) {
+            if (isset($options['payload']) && isset($options['content_type'])) {
+                $payload = $options['payload'];
+                $contentType = $options['content_type'];
+            } else {
+                throw new \InvalidArgumentException(
+                    "If one of 'payload' and 'content_type' are specified, both must be specified."
+                );
+            }
+        } else {
+            $payload = null;
+            $contentType = null;
+        }
+
+        if ($ts = $header->attribute('ts')) {
+            // do something with ts
+        }
+
+        $artifacts = new Artifacts(
+            $request->artifacts()->method(),
+            $request->artifacts()->host(),
+            $request->artifacts()->port(),
+            $request->artifacts()->resource(),
+            $request->artifacts()->timestamp(),
+            $request->artifacts()->nonce(),
+            $header->attribute('ext'),
+            $payload,
+            $contentType,
+            $header->attribute('hash'),
+            $request->artifacts()->app(),
+            $request->artifacts()->dlg()
+        );
+
+        $mac = $this->crypto->calculateMac('response', $credentials, $artifacts);
+        if ($header->attribute('mac') !== $mac) {
+            return false;
+        }
+
+        if (!$payload) {
+            return true;
+        }
+
+        if (!$artifacts->hash()) {
+            return false;
+        }
+
+        $hash = $this->crypto->calculatePayloadHash($payload, $credentials->algorithm(), $contentType);
+        return $artifacts->hash() === $hash;
     }
 }
