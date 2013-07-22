@@ -9,15 +9,15 @@ use Dflydev\Hawk\Time\TimeProviderInterface;
 class ServerBuilder
 {
     private $crypto;
-    private $credentialsCallback;
+    private $credentialsProvider;
     private $timeProvider;
-    private $nonceCallback;
+    private $nonceValidator;
     private $timestampSkewSec;
     private $localtimeOffsetSec;
 
-    public function __construct($credentialsCallback)
+    public function __construct($credentialsProvider)
     {
-        $this->credentialsCallback = $credentialsCallback;
+        $this->credentialsProvider = $credentialsProvider;
     }
 
     public function setCrypto(Crypto $crypto)
@@ -34,9 +34,9 @@ class ServerBuilder
         return $this;
     }
 
-    public function setNonceCallback($nonceCallback)
+    public function setNonceValidator($nonceValidator)
     {
-        $this->nonceCallback = $nonceCallback;
+        $this->nonceValidator = $nonceValidator;
 
         return $this;
     }
@@ -59,7 +59,7 @@ class ServerBuilder
     {
         $crypto = $this->crypto ?: new Crypto;
         $timeProvider = $this->timeProvider ?: DefaultTimeProviderFactory::create();
-        $nonceCallback = $this->nonceCallback ?: function ($nonce, $timestamp) {
+        $nonceValidator = $this->nonceValidator ?: function ($nonce, $timestamp) {
             return true;
         };
         $timestampSkewSec = $this->timestampSkewSec ?: 60;
@@ -67,16 +67,16 @@ class ServerBuilder
 
         return new Server(
             $crypto,
-            $this->credentialsCallback,
+            $this->credentialsProvider,
             $timeProvider,
-            $nonceCallback,
+            $nonceValidator,
             $timestampSkewSec,
             $localtimeOffsetSec
         );
     }
 
-    public static function create($credentialsCallback)
+    public static function create($credentialsProvider)
     {
-        return new static($credentialsCallback);
+        return new static($credentialsProvider);
     }
 }

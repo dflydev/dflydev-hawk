@@ -2,34 +2,58 @@
 
 namespace Dflydev\Hawk\Server;
 
+use Dflydev\Hawk\Credentials\CallbackCredentialsProvider;
 use Dflydev\Hawk\Credentials\CredentialsInterface;
+use Dflydev\Hawk\Credentials\CredentialsProviderInterface;
 use Dflydev\Hawk\Crypto\Artifacts;
 use Dflydev\Hawk\Crypto\Crypto;
 use Dflydev\Hawk\Header\Header;
 use Dflydev\Hawk\Header\HeaderFactory;
+use Dflydev\Hawk\Nonce\CallbackNonceValidator;
+use Dflydev\Hawk\Nonce\NonceValidatorInterface;
 use Dflydev\Hawk\Time\TimeProviderInterface;
 
 class Server implements ServerInterface
 {
     private $crypto;
-    private $credentialsCallback;
+    private $credentialsProvider;
     private $timeProvider;
-    private $nonceCallback;
+    private $nonceValidator;
     private $timestampSkewSec;
     private $localtimeOffsetSec;
 
     public function __construct(
         Crypto $crypto,
-        $credentialsCallback,
+        $credentialsProvider,
         TimeProviderInterface $timeProvider,
-        $nonceCallback,
+        $nonceValidator,
         $timestampSkewSec,
         $localtimeOffsetSec
     ) {
+        if (!$credentialsProvider instanceof CredentialsProviderInterface) {
+            if (is_callable($credentialsProvider)) {
+                $credentialsProvider = new CallbackCredentialsProvider($credentialsProvider);
+            } else {
+                throw new \InvalidArgumentException(
+                    "Credentials provider must implement CredentialsProviderInterface or must be callable"
+                );
+            }
+        }
+
+        if (!$nonceValidator instanceof NonceValidatorInterface) {
+            if (is_callable($nonceValidator)) {
+                $nonceValidator = new CallbackNonceValidator($nonceValidator);
+            } else {
+                throw new \InvalidArgumentException(
+                    "Nonce validator must implement NonceValidatorInterface or must be callable"
+                );
+            }
+        }
+
         $this->crypto = $crypto;
-        $this->credentialsCallback = $credentialsCallback;
+        $this->credentialsProvider = $credentialsProvider;
         $this->timeProvider = $timeProvider;
-        $this->nonceCallback = $nonceCallback;
+        $this->nonceValidator = $nonceValidator;
         $this->timestampSkewSec = $timestampSkewSec;
         $this->localtimeOffsetSec = $localtimeOffsetSec;
     }
@@ -73,10 +97,7 @@ class Server implements ServerInterface
             $header->attribute('dlg')
         );
 
-        $credentials = call_user_func_array(
-            $this->credentialsCallback,
-            array($header->attribute('id'))
-        );
+        $credentials = $this->credentialsProvider->loadCredentialsById($header->attribute('id'));
 
         $calculatedMac = $this->crypto->calculateMac('header', $credentials, $artifacts);
 
@@ -102,13 +123,7 @@ class Server implements ServerInterface
             }
         }
 
-        if (!call_user_func_array(
-            $this->nonceCallback,
-            array(
-                $artifacts->nonce(),
-                $artifacts->timestamp(),
-            )
-        )) {
+        if (!$this->nonceValidator->validateNonce($artifacts->nonce(), $artifacts->timestamp())) {
             throw new UnauthorizedException('Invalid nonce');
         }
 
