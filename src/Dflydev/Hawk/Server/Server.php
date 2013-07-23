@@ -97,6 +97,12 @@ class Server implements ServerInterface
             $header->attribute('dlg')
         );
 
+        foreach (array('id', 'ts', 'nonce', 'mac') as $requiredAttribute) {
+            if (null === $header->attribute($requiredAttribute)) {
+                throw new UnauthorizedException('Missing attributes');
+            }
+        }
+
         $credentials = $this->credentialsProvider->loadCredentialsById($header->attribute('id'));
 
         $calculatedMac = $this->crypto->calculateMac('header', $credentials, $artifacts);
