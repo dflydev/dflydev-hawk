@@ -84,7 +84,6 @@ class Client implements ClientInterface
             'id' => $credentials->id(),
             'ts' => $artifacts->timestamp(),
             'nonce' => $artifacts->nonce(),
-            'mac' => $this->crypto->calculateMac('header', $credentials, $artifacts),
         );
 
         if (null !== $hash) {
@@ -94,6 +93,8 @@ class Client implements ClientInterface
         if (null !== $ext) {
             $attributes['ext'] = $ext;
         }
+
+        $attributes['mac'] = $this->crypto->calculateMac('header', $credentials, $artifacts);
 
         if (null !== $app) {
             $attributes['app'] = $app;
