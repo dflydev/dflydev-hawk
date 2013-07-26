@@ -162,8 +162,6 @@ class Server implements ServerInterface
         }
 
         $ext = isset($options['ext']) ? $options['ext'] : null;
-        $app = isset($options['app']) ? $options['app'] : null;
-        $dlg = isset($options['dlg']) ? $options['dlg'] : null;
 
         $responseArtifacts = new Artifacts(
             $artifacts->method(),
@@ -176,8 +174,8 @@ class Server implements ServerInterface
             $payload,
             $contentType,
             $hash,
-            $app,
-            $dlg
+            $artifacts->app(),
+            $artifacts->dlg()
         );
 
         $attributes = array(
