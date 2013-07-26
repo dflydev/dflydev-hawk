@@ -95,6 +95,14 @@ class Client implements ClientInterface
             $attributes['ext'] = $ext;
         }
 
+        if (null !== $app) {
+            $attributes['app'] = $app;
+        }
+
+        if (null !== $dlg) {
+            $attributes['dlg'] = $dlg;
+        }
+
         return new Request(HeaderFactory::create('Authorization', $attributes), $artifacts);
     }
 
