@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "74616bf21c4df1fc77f2c02027a6ad31",
+    "hash": "5888d067caf3342e0827ad0351702644",
     "packages": [
         {
             "name": "ircmaxell/random-lib",
@@ -11,22 +11,27 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ircmaxell/RandomLib.git",
-                "reference": "53597c59af81d08444b9dd4e121cdefc354c00a4"
+                "reference": "0eaad991c1756842f26dfbcbc6effcabb5003d0a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ircmaxell/RandomLib/zipball/53597c59af81d08444b9dd4e121cdefc354c00a4",
-                "reference": "53597c59af81d08444b9dd4e121cdefc354c00a4",
+                "url": "https://api.github.com/repos/ircmaxell/RandomLib/zipball/0eaad991c1756842f26dfbcbc6effcabb5003d0a",
+                "reference": "0eaad991c1756842f26dfbcbc6effcabb5003d0a",
                 "shasum": ""
             },
             "require": {
-                "ircmaxell/security-lib": "dev-master",
+                "ircmaxell/security-lib": "1.0.*@dev",
                 "php": ">=5.3.2"
             },
             "require-dev": {
                 "mikey179/vfsstream": "1.1.*"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
             "autoload": {
                 "psr-0": {
                     "RandomLib": "lib"
@@ -51,20 +56,20 @@
                 "random-numbers",
                 "random-strings"
             ],
-            "time": "2013-06-25 13:09:53"
+            "time": "2013-07-30 17:40:57"
         },
         {
             "name": "ircmaxell/security-lib",
-            "version": "dev-master",
+            "version": "1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ircmaxell/SecurityLib.git",
-                "reference": "b8ce85731e14940d92ff72274e8d19696b69a018"
+                "reference": "v1.0.0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ircmaxell/SecurityLib/zipball/b8ce85731e14940d92ff72274e8d19696b69a018",
-                "reference": "b8ce85731e14940d92ff72274e8d19696b69a018",
+                "url": "https://api.github.com/repos/ircmaxell/SecurityLib/zipball/v1.0.0",
+                "reference": "v1.0.0",
                 "shasum": ""
             },
             "require": {
@@ -92,7 +97,7 @@
             ],
             "description": "A Base Security Library",
             "homepage": "https://github.com/ircmaxell/PHP-SecurityLib",
-            "time": "2013-02-13 17:23:59"
+            "time": "2013-04-30 18:00:34"
         }
     ],
     "packages-dev": [
@@ -292,16 +297,16 @@
         },
         {
             "name": "phpunit/php-token-stream",
-            "version": "1.1.5",
+            "version": "1.1.7",
             "source": {
                 "type": "git",
-                "url": "git://github.com/sebastianbergmann/php-token-stream.git",
-                "reference": "1.1.5"
+                "url": "https://github.com/sebastianbergmann/php-token-stream.git",
+                "reference": "1.1.7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/sebastianbergmann/php-token-stream/zipball/1.1.5",
-                "reference": "1.1.5",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-token-stream/zipball/1.1.7",
+                "reference": "1.1.7",
                 "shasum": ""
             },
             "require": {
@@ -329,11 +334,11 @@
                 }
             ],
             "description": "Wrapper around PHP's tokenizer extension.",
-            "homepage": "http://www.phpunit.de/",
+            "homepage": "https://github.com/sebastianbergmann/php-token-stream/",
             "keywords": [
                 "tokenizer"
             ],
-            "time": "2012-10-11 04:47:14"
+            "time": "2013-07-29 14:27:06"
         },
         {
             "name": "phpunit/phpunit",
@@ -511,8 +516,7 @@
     ],
     "minimum-stability": "stable",
     "stability-flags": {
-        "ircmaxell/random-lib": 20,
-        "ircmaxell/security-lib": 20
+        "ircmaxell/random-lib": 20
     },
     "platform": [
 
