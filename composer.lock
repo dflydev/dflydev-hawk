@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "5888d067caf3342e0827ad0351702644",
+    "hash": "8f86f89326a977cee6e3f382ff33f4b2",
     "packages": [
         {
             "name": "ircmaxell/random-lib",
@@ -11,12 +11,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ircmaxell/RandomLib.git",
-                "reference": "0eaad991c1756842f26dfbcbc6effcabb5003d0a"
+                "reference": "v1.0.0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ircmaxell/RandomLib/zipball/0eaad991c1756842f26dfbcbc6effcabb5003d0a",
-                "reference": "0eaad991c1756842f26dfbcbc6effcabb5003d0a",
+                "url": "https://api.github.com/repos/ircmaxell/RandomLib/zipball/v1.0.0",
+                "reference": "v1.0.0",
                 "shasum": ""
             },
             "require": {
