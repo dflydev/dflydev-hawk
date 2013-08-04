@@ -165,9 +165,6 @@ $request = $client->createRequest(
     )
 );
 
-// Create a really useful fictional user agent.
-$userAgent = new Fictional\UserAgent;
-
 // Ask a really useful fictional user agent to make a request; note that the
 // request we are making here matches the details that we told the Hawk client
 // about our request.
