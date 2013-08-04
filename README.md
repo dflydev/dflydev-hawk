@@ -229,7 +229,7 @@ Represents a valid set of credentials.
 
 In some contexts only the key may be known.
 
-### new Dflydev\Hawk\Credentials\Credentials
+### Dflydev\Hawk\Credentials\Credentials
 
 A simple implementation of `CredentialsInterface`.
 
@@ -253,6 +253,40 @@ Header
  * **fieldName()**: The name for the header field
  * **fieldValue()**: The value for the header field
  * **attributes()**: The attributes used to build the field value
+
+### Dflydev\Hawk\Header\HeaderFactory
+
+ * **create($fieldName, array $attributes = null)**<br>
+   Creates a Hawk header for a given field name for a set of attributes.
+ * **createFromString($fieldName, $fieldValue, array $requiredKeys = null)**<br>
+   Creates a Hawk header for a given field name from a Hawk value string. For
+   example, 'Hawk id="foo", mac="1234"' would be an example of a Hawk value
+   string. This is useful for converting a header value coming in off the wire.
+
+   Throws:
+
+    * **Dflydev\Hawk\Header\FieldValueParserException**
+    * **Dflydev\Hawk\Header\NotHawkAuthorizationException**
+
+### Dflydev\Hawk\Header\HeaderParser
+
+ * **parseFieldValue($fieldValue, array $requiredKeys = null)**<br>
+   Parses a field value string into an associative array of attributes.
+
+   Throws:
+
+    * **Dflydev\Hawk\Header\FieldValueParserException**
+    * **Dflydev\Hawk\Header\NotHawkAuthorizationException**
+
+### Dflydev\Hawk\Header\FieldValueParserException
+
+Indicates that a string claims to be a Hawk string but it cannot be completely
+parsed. This is mostly a sign of a corrupted or malformed header value.
+
+### Dflydev\Hawk\Header\NotHawkAuthorizationException
+
+Indicates that the string has nothing to do with Hawk. Currently means that the
+string does not start with 'Hawk'.
 
 
 License
