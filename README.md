@@ -232,7 +232,7 @@ $server = Dflydev\Hawk\Server\ServerBuilder::create($credentialsProvider)
     ->build()
 ```
 
-#### Complete ClientBuilderExample
+#### Complete ServerBuilderExample
 
 ```php
 <?php
