@@ -384,7 +384,8 @@ try {
 //
 // ...
 //
-// Ok we are done doing things!
+// Ok we are done doing things! Assume based on what we did we ended up deciding
+// the following payload and content type should be used:
 
 $payload = '{"message": "good day, sir!"}';
 $contentType = 'application/json';
