@@ -262,7 +262,7 @@ information about the request that the client knew about when it signed the
 request.
 
 In particular, the authorization header should include the ID. This ID is used
-to retrieve the credentails (notably the key) in order to calculate the MAC
+to retrieve the credentials (notably the key) in order to calculate the MAC
 based on the rest of the request information.
 
 #### Authenticate Example
