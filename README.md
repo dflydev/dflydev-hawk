@@ -141,6 +141,13 @@ $authenticatedResponse = $client->authenticate(
 ```php
 <?php
 
+// Create a set of Hawk credentials
+$credentials = new Dflydev\Hawk\Credentials\Credentials(
+    'afe89a3x',  // shared key
+    'sha256',    // default: sha256
+    '12345'      // identifier, default: null
+);
+
 // Create a Hawk client
 $client = Dflydev\Hawk\Client\ClientBuilder::create()
     ->build();
