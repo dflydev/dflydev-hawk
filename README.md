@@ -125,7 +125,7 @@ $header = $headers->get('Server-Authorization');
 // We need to use the original credentials, the original request, the value
 // for the 'Server-Authorization' header, and optionally the payload and
 // content type of the response from the server.
-$authenticatedResponse = $client->authenticate(
+$isAuthenticatedResponse = $client->authenticate(
     $credentials,
     $request,
     $header,
@@ -182,7 +182,7 @@ $response = Fictional\UserAgent::makeRequest(
 // response we could just look at the content and be done with it. However, we
 // are given the tools to authenticate the response to ensure that the response
 // we were given came from the server we were expecting to be talking to.
-$authenticatedResponse = $client->authenticate(
+$isAuthenticatedResponse = $client->authenticate(
     $credentials,
     $request,
     $response->headers->get('Server-Authorization'),
@@ -192,7 +192,7 @@ $authenticatedResponse = $client->authenticate(
     )
 );
 
-if (!$authenticatedResponse) {
+if (!$isAuthenticatedResponse) {
     die("The server did a very bad thing...");
 }
 
