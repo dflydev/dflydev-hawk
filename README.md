@@ -141,10 +141,13 @@ $authenticatedResponse = $client->authenticate(
 ```php
 <?php
 
+// Create a Hawk client
 $client = Dflydev\Hawk\Client\ClientBuilder::create()
     ->build();
 
-// Create a Hawk request
+// Create a Hawk request based on making a POST request to a specific URL
+// using a specific user's credentials. Also, we're expecting that we'll
+// be sending a payload of 'hello world!' with a content-type of 'text/plain'.
 $request = $client->createRequest(
     $credentials,
     'http://example.com/foo/bar?whatever',
@@ -158,9 +161,10 @@ $request = $client->createRequest(
 // Create a really useful fictional user agent.
 $userAgent = new Fictional\UserAgent;
 
-// Ask our user agent to make a request; note that the request we are making
-// here matches the details that we told the Hawk client about our request.
-$response = $userAgent->makeRequest(
+// Ask a really useful fictional user agent to make a request; note that the
+// request we are making here matches the details that we told the Hawk client
+// about our request.
+$response = Fictional\UserAgent::makeRequest(
     'POST',
     'http://example.com/foo/bar?whatever',
     array(
@@ -170,7 +174,10 @@ $response = $userAgent->makeRequest(
     'hello world!'
 );
 
-// Authenticate the response that we got back from the server
+// This part is optional but recommended! At this point if we have a successful
+// response we could just look at the content and be done with it. However, we
+// are given the tools to authenticate the response to ensure that the response
+// we were given came from the server we were expecting to be talking to.
 $authenticatedResponse = $client->authenticate(
     $credentials,
     $request,
