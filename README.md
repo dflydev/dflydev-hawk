@@ -36,7 +36,7 @@ $client = Dflydev\Hawk\Client\ClientBuilder::create()
 ```php
 <?php
 
-// Simple example
+// A complete example
 $client = Dflydev\Hawk\Client\ClientBuilder::create()
     ->setCrypto($crypto)
     ->setTimeProvider($timeProvider)
@@ -96,6 +96,10 @@ including a header and the artifacts that were used to create the request.
  * **artifacts()**: An `Artifacts` instance that contains the values that were
    used in creating the request
 
+The **header** is required to be able to get the properly formatted Hawk
+authorization header to send to the server. The **artifacts** are useful in the
+case that authentication will be done on the server response.
+
 
 ### Authenticate Server Response
 
@@ -130,6 +134,58 @@ $authenticatedResponse = $client->authenticate(
         'content_type' => 'application/json',
     )
 );
+```
+
+### Complete Client Example
+
+```php
+<?php
+
+$client = Dflydev\Hawk\Client\ClientBuilder::create()
+    ->build();
+
+// Create a Hawk request
+$request = $client->createRequest(
+    $credentials,
+    'http://example.com/foo/bar?whatever',
+    'POST',
+    array(
+        'payload' => 'hello world!',
+        'content_type' => 'text/plain',
+    )
+);
+
+// Create a really useful fictional user agent.
+$userAgent = new Fictional\UserAgent;
+
+// Ask our user agent to make a request; note that the request we ar emaking
+// here matches the details that we told the Hawk client about our request.
+$response = $userAgent->makeRequest(
+    'POST',
+    'http://example.com/foo/bar?whatever',
+    array(
+        'content_type' => 'text/plain',
+        $request->header()->fieldName() => $request->header()->fieldValue(),
+    ),
+    'hello world!'
+);
+
+// Authenticate the response that we got back from the server
+$authenticatedResponse = $client->authenticate(
+    $credentials,
+    $request,
+    $response->headers->get('Server-Authorization'),
+    array(
+        'payload' => $response->getContent(),
+        'content_type' => $response->headers->get('content-type'),
+    )
+);
+
+if (!$authenticatedResponse) {
+    die("The server did a very bad thing...");
+}
+
+// Huzzah!
 ```
 
 Crypto
