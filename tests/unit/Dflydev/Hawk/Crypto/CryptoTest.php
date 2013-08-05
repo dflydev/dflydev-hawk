@@ -168,6 +168,25 @@ class CryptoTest extends \PHPUnit_Framework_TestCase
                     $tentTestVectorsAttributes['hash']
                 ),
             ),
+            array(
+
+                //
+                // Bewit (GET /posts)
+                //
+
+                'O0mhprgoXqF48Dlw5FWAWvVQIpgGYsqsX76tpo6KyqI=',
+
+                'bewit',
+                $tentTestVectorsCredentials,
+                new Artifacts(
+                    'GET',
+                    $tentTestVectorsAttributes['host'],
+                    $tentTestVectorsAttributes['port'],
+                    $tentTestVectorsAttributes['resource'],
+                    $tentTestVectorsAttributes['timestamp'],
+                    ''
+                ),
+            ),
         );
     }
 
