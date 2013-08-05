@@ -56,7 +56,7 @@ class Crypto
         return (0 === $mismatch);
     }
 
-    protected function generateNormalizedString($type, Artifacts $attributes)
+    private function generateNormalizedString($type, Artifacts $attributes)
     {
         $normalized = 'hawk.'.self::HEADER_VERSION.'.'.$type."\n".
             $attributes->timestamp()."\n".
