@@ -200,6 +200,29 @@ if (!$isAuthenticatedResponse) {
 ```
 
 
+### Bewit
+
+Hawk supports a method for granting third-parties temporary access to individual
+resources using a query parameter called bewit.
+
+The return value is a string that represents the bewit. This string should be
+added to a requested URI by appending it to the end of the URI. If the URI has
+query paramters already, the bewit should have `&bewit=` appended to the front
+of it. If the URI does not have query paramters already, the bewit should
+have `?bewit=` appended to the front of it.
+
+#### Client Bewit Example
+
+```php
+<?php
+
+$bewit = $client->createBewit(
+    $credentials,
+    'https://example.com/posts?foo=bar',
+    300 // ttl in seconds
+);
+```
+
 Server
 ------
 
@@ -399,6 +422,27 @@ header(sprintf("%s: %s", $header->fieldName(), $header->fieldValue()));
 
 // Output our payload
 print $payload;
+```
+
+
+### Bewit
+
+Hawk supports a method for granting third-parties temporary access to individual
+resources using a query parameter called bewit.
+
+Bewit authentication should only occur for `GET` and `HEAD` requests. The return
+value of an authenticated bewit is a Server Response object.
+
+#### Server Bewit Example
+
+```php
+<?php
+
+$response = $server->authenticateBewit(
+    'example.com',
+    443,
+    '/posts?bewit=ZXhxYlpXdHlrRlpJaDJEN2NYaTlkQVwxMzY4OTk2ODAwXE8wbWhwcmdvWHFGNDhEbHc1RldBV3ZWUUlwZ0dZc3FzWDc2dHBvNkt5cUk9XA'
+);
 ```
 
 
