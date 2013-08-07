@@ -203,4 +203,63 @@ class Server implements ServerInterface
 
         return $this->crypto->fixedTimeComparison($calculatedHash, $hash);
     }
+
+    public function authenticateBewit(
+        $host,
+        $port,
+        $resource
+    ) {
+        // Measure now before any other processing
+        $now = $this->timeProvider->createTimestamp() + $this->localtimeOffsetSec;
+
+        if (!preg_match(
+            '/^(\/.*)([\?&])bewit\=([^&$]*)(?:&(.+))?$/',
+            $resource,
+            $resourceParts
+        )) {
+            // TODO: Should this do something else?
+            throw new UnauthorizedException('Malformed resource or does not contan bewit');
+        }
+
+        $bewit = base64_decode(str_replace(
+            array('-', '_', '', ''),
+            array('+', '/', '=', "\n"),
+            $resourceParts[3]
+        ));
+
+        list ($id, $exp, $mac, $ext) = explode('\\', $bewit);
+
+        if ($exp < $now) {
+            throw new UnauthorizedException('Access expired');
+        }
+
+        $resource = $resourceParts[1];
+        if (isset($resourceParts[4])) {
+            $resource .= $resourceParts[2] . $resourceParts[4];
+        }
+
+        $artifacts = new Artifacts(
+            'GET',
+            $host,
+            $port,
+            $resource,
+            $exp,
+            '',
+            $ext
+        );
+
+        $credentials = $this->credentialsProvider->loadCredentialsById($id);
+
+        $calculatedMac = $this->crypto->calculateMac(
+            'bewit',
+            $credentials,
+            $artifacts
+        );
+
+        if (!$this->crypto->fixedTimeComparison($calculatedMac, $mac)) {
+            throw new UnauthorizedException('Bad MAC');
+        }
+
+        return new Response($credentials, $artifacts);
+    }
 }
