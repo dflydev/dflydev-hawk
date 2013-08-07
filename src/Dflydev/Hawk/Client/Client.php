@@ -172,4 +172,49 @@ class Client implements ClientInterface
         $hash = $this->crypto->calculatePayloadHash($payload, $credentials->algorithm(), $contentType);
         return $artifacts->hash() === $hash;
     }
+
+    public function createBewit(CredentialsInterface $credentials, $uri, $ttlSec, array $options = array())
+    {
+        $timestamp = isset($options['timestamp']) ? $options['timestamp'] : $this->timeProvider->createTimestamp();
+        if ($this->localtimeOffset) {
+            $timestamp += $this->localtimeOffset;
+        }
+
+        $parsed = parse_url($uri);
+        $host = $parsed['host'];
+        $resource = isset($parsed['path']) ? $parsed['path'] : '';
+
+        if (isset($parsed['query'])) {
+            $resource .= '?'.$parsed['query'];
+        }
+
+        $port = isset($parsed['port']) ? $parsed['port'] : ($parsed['scheme'] === 'https' ? 443 : 80);
+
+        $ext = isset($options['ext']) ? $options['ext'] : null;
+
+        $exp = $timestamp + $ttlSec;
+
+        $artifacts = new Artifacts(
+            'GET',
+            $host,
+            $port,
+            $resource,
+            $exp,
+            '',
+            $ext
+        );
+
+        $bewit = implode('\\', array(
+            $credentials->id(),
+            $exp,
+            $this->crypto->calculateMac('bewit', $credentials, $artifacts),
+            $ext,
+        ));
+
+        return str_replace(
+            array('+', '/', '=', "\n"),
+            array('-', '_', '', ''),
+            base64_encode($bewit)
+        );
+    }
 }
