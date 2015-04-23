@@ -4,6 +4,10 @@ namespace Dflydev\Hawk\Credentials;
 
 class Credentials implements CredentialsInterface
 {
+    private $key;
+    private $algorithm;
+    private $id;
+
     public function __construct($key, $algorithm = 'sha256', $id = null)
     {
         $this->key = $key;
