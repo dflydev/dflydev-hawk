@@ -182,7 +182,7 @@ class Server implements ServerInterface
             'mac' => $this->crypto->calculateMac('response', $credentials, $responseArtifacts),
         );
 
-        if ($hash) {
+        if ($hash !== null) {
             $attributes['hash'] = $hash;
         }
 
