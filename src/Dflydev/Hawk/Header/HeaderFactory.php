@@ -15,7 +15,7 @@ class HeaderFactory
                     $fieldValue .= ',';
                 }
 
-                $fieldValue .= ' ' . $key . '="' . $value . '"';
+                $fieldValue .= ' '.$key.'="'.$value.'"';
             }
         }
 

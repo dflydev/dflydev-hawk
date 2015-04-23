@@ -235,7 +235,7 @@ class Server implements ServerInterface
 
         $resource = $resourceParts[1];
         if (isset($resourceParts[4])) {
-            $resource .= $resourceParts[2] . $resourceParts[4];
+            $resource .= $resourceParts[2].$resourceParts[4];
         }
 
         $artifacts = new Artifacts(
