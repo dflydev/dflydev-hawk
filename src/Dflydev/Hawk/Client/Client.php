@@ -17,6 +17,9 @@ class Client implements ClientInterface
     private $nonceProvider;
     private $localtimeOffset;
 
+    /**
+     * @param integer $localtimeOffset
+     */
     public function __construct(
         Crypto $crypto,
         TimeProviderInterface $timeProvider,

@@ -59,7 +59,7 @@ class ServerBuilder
     {
         $crypto = $this->crypto ?: new Crypto;
         $timeProvider = $this->timeProvider ?: DefaultTimeProviderFactory::create();
-        $nonceValidator = $this->nonceValidator ?: function ($nonce, $timestamp) {
+        $nonceValidator = $this->nonceValidator ?: function($nonce, $timestamp) {
             return true;
         };
         $timestampSkewSec = $this->timestampSkewSec ?: 60;
