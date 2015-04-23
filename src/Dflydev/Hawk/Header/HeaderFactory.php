@@ -30,16 +30,14 @@ class HeaderFactory
         );
     }
 
-    public static function createFromHeaderObjectOrString($fieldName, $headerObjectOrString, callable $onError)
+    public static function createFromHeaderObjectOrString($fieldName, $headerObjectOrString, $onError)
     {
         if (is_string($headerObjectOrString)) {
             return static::createFromString($fieldName, $headerObjectOrString);
         } elseif ($headerObjectOrString instanceof Header) {
             return $headerObjectOrString;
         } else {
-            throw new \InvalidArgumentException(
-                'Header must either be a string or an instance of "Dflydev\Hawk\Header\Header"'
-            );
+            call_user_func($onError);
         }
     }
 }
