@@ -113,15 +113,15 @@ class Client implements ClientInterface
         $headerObjectOrString,
         array $options = array()
     ) {
-        if (is_string($headerObjectOrString)) {
-            $header = HeaderFactory::createFromString('Server-Authorization', $headerObjectOrString);
-        } elseif ($headerObjectOrString instanceof Header) {
-            $header = $headerObjectOrString;
-        } else {
-            throw new \InvalidArgumentException(
-                "Header must either be a string or an instance of 'Dflydev\Hawk\Header\Header'"
-            );
-        }
+        $header = HeaderFactory::createFromHeaderObjectOrString(
+            'Server-Authorization',
+            $headerObjectOrString,
+            function () {
+                throw new \InvalidArgumentException(
+                    "Header must either be a string or an instance of 'Dflydev\Hawk\Header\Header'"
+                );
+            }
+        );
 
         if (isset($options['payload']) || isset($options['content_type'])) {
             if (isset($options['payload']) && isset($options['content_type'])) {

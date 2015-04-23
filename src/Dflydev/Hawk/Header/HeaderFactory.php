@@ -29,4 +29,17 @@ class HeaderFactory
             HeaderParser::parseFieldValue($fieldValue, $requiredKeys)
         );
     }
+
+    public static function createFromHeaderObjectOrString($fieldName, $headerObjectOrString, callable $onError)
+    {
+        if (is_string($headerObjectOrString)) {
+            return static::createFromString($fieldName, $headerObjectOrString);
+        } elseif ($headerObjectOrString instanceof Header) {
+            return $headerObjectOrString;
+        } else {
+            throw new \InvalidArgumentException(
+                'Header must either be a string or an instance of "Dflydev\Hawk\Header\Header"'
+            );
+        }
+    }
 }

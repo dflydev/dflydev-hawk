@@ -71,13 +71,13 @@ class Server implements ServerInterface
             throw new UnauthorizedException("Missing Authorization header");
         }
 
-        if (is_string($headerObjectOrString)) {
-            $header = HeaderFactory::createFromString('Authorization', $headerObjectOrString);
-        } elseif ($headerObjectOrString instanceof Header) {
-            $header = $headerObjectOrString;
-        } else {
-            throw new UnauthorizedException("Invalid Authorization header");
-        }
+        $header = HeaderFactory::createFromHeaderObjectOrString(
+            'Authorization',
+            $headerObjectOrString,
+            function () {
+                throw new UnauthorizedException("Invalid Authorization header");
+            }
+        );
 
         // Measure now before any other processing
         $now = $this->timeProvider->createTimestamp() + $this->localtimeOffsetSec;
