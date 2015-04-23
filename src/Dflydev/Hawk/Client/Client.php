@@ -141,7 +141,7 @@ class Client implements ClientInterface
         }
 
         if ($ts = $header->attribute('ts')) {
-            // do something with ts
+            // @todo do something with ts
         }
 
         $artifacts = new Artifacts(
