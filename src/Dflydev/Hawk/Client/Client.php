@@ -13,6 +13,9 @@ use Dflydev\Hawk\Time\TimeProviderInterface;
 class Client implements ClientInterface
 {
     private $crypto;
+    private $timeProvider;
+    private $nonceProvider;
+    private $localtimeOffset;
 
     public function __construct(
         Crypto $crypto,
