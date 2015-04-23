@@ -124,7 +124,7 @@ class Client implements ClientInterface
             $headerObjectOrString,
             function () {
                 throw new \InvalidArgumentException(
-                    "Header must either be a string or an instance of 'Dflydev\Hawk\Header\Header'"
+                    'Header must either be a string or an instance of "Dflydev\Hawk\Header\Header"'
                 );
             }
         );
@@ -135,7 +135,7 @@ class Client implements ClientInterface
                 $contentType = $options['content_type'];
             } else {
                 throw new \InvalidArgumentException(
-                    "If one of 'payload' and 'content_type' are specified, both must be specified."
+                    'If one of "payload" and "content_type" are specified, both must be specified.'
                 );
             }
         } else {
