@@ -207,8 +207,8 @@ resources using a query parameter called bewit.
 
 The return value is a string that represents the bewit. This string should be
 added to a requested URI by appending it to the end of the URI. If the URI has
-query paramters already, the bewit should have `&bewit=` appended to the front
-of it. If the URI does not have query paramters already, the bewit should
+query parameters already, the bewit should have `&bewit=` appended to the front
+of it. If the URI does not have query parameters already, the bewit should
 have `?bewit=` appended to the front of it.
 
 #### Client Bewit Example
@@ -230,7 +230,7 @@ Server
 
 The `Server` has a few required dependencies. It is generally easier to
 construct a `Server` by using the `ServerBuilder`. A `Server` can be built
-without setting anything but the crendetials provider to get sane defaults.
+without setting anything but the credentials provider to get sane defaults.
 
 #### Simple ServerBuilder Example
 
@@ -333,7 +333,7 @@ including the credentials and artifacts that are associated with the request.
 
 ### Creating a Response Header
 
-Hawk provides the ability for the server to sign the response to privde the
+Hawk provides the ability for the server to sign the response to provide the
 client with a way to authenticate a server response.
 
 All available options include:
