@@ -265,6 +265,8 @@ $credentialsProvider = function ($id) {
             '12345'      // identifier, default: null
         );
     }
+
+    throw new UnauthorizedException("Unknown credentials");
 };
 
 // A complete example
