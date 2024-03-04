@@ -1,6 +1,6 @@
 <?php
 
-namespace Dflydev\Hawk\unit\Crypto;
+namespace Dflydev\Hawk\Unit\Crypto;
 
 use Dflydev\Hawk\Credentials\Credentials;
 use Dflydev\Hawk\Credentials\CredentialsInterface;

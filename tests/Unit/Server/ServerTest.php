@@ -1,6 +1,6 @@
 <?php
 
-namespace Dflydev\Hawk\unit\Server;
+namespace Dflydev\Hawk\Unit\Server;
 
 use Dflydev\Hawk\Credentials\CallbackCredentialsProvider;
 use Dflydev\Hawk\Credentials\Credentials;

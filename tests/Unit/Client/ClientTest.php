@@ -1,6 +1,6 @@
 <?php
 
-namespace Dflydev\Hawk\unit\Client;
+namespace Dflydev\Hawk\Unit\Client;
 
 use Dflydev\Hawk\Client\ClientBuilder;
 use Dflydev\Hawk\Credentials\Credentials;
