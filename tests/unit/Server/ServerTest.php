@@ -2,6 +2,7 @@
 
 namespace Dflydev\Hawk\unit\Server;
 
+use Dflydev\Hawk\Credentials\CallbackCredentialsProvider;
 use Dflydev\Hawk\Credentials\Credentials;
 use Dflydev\Hawk\Server\ServerBuilder;
 use Dflydev\Hawk\Time\ConstantTimeProvider;
@@ -19,7 +20,7 @@ class ServerTest extends TestCase
             'exqbZWtykFZIh2D7cXi9dA'
         );
 
-        $server = ServerBuilder::create($credentialsProvider)
+        $server = ServerBuilder::create(new CallbackCredentialsProvider($credentialsProvider))
             ->setTimeProvider(new ConstantTimeProvider(1368996800))
             ->build();
 

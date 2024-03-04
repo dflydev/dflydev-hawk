@@ -11,16 +11,16 @@ class Crypto
 {
     public const HEADER_VERSION = 1;
 
-    public function calculatePayloadHash(string $payload, $algorithm, $contentType): string
+    public function calculatePayloadHash(string $payload, string $algorithm, string $contentType): string
     {
-        [$contentType] = explode(';', (string) $contentType);
+        [$contentType] = explode(';', $contentType);
         $contentType = strtolower(trim($contentType));
 
         $normalized = 'hawk.' . self::HEADER_VERSION . '.payload' . "\n" .
             $contentType . "\n" .
             $payload . "\n";
 
-        return base64_encode(hash((string) $algorithm, $normalized, true));
+        return base64_encode(hash($algorithm, $normalized, true));
     }
 
     public function calculateMac(string $type, CredentialsInterface $credentials, Artifacts $attributes): string
@@ -50,14 +50,14 @@ class Crypto
         ));
     }
 
-    public function fixedTimeComparison($a, $b): bool
+    public function fixedTimeComparison(string $a, string $b): bool
     {
-        $mismatch = strlen((string) $a) === strlen((string) $b) ? 0 : 1;
+        $mismatch = strlen($a) === strlen($b) ? 0 : 1;
         if ($mismatch !== 0) {
             $b = $a;
         }
 
-        for ($i = 0; $i < strlen((string) $a); $i++) {
+        for ($i = 0; $i < strlen($a); $i++) {
             $ac = $a[$i];
             $bc = $b[$i];
             $mismatch += $ac === $bc ? 0 : 1;

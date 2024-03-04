@@ -28,13 +28,13 @@ class Server implements ServerInterface
     }
 
     public function authenticate(
-        $method,
-        $host,
-        $port,
-        $resource,
-        $contentType = null,
-        $payload = null,
-        $headerObjectOrString = null
+        string $method,
+        string $host,
+        mixed $port,
+        mixed $resource,
+        string $contentType = null,
+        mixed $payload = null,
+        mixed $headerObjectOrString = null
     ): Response {
         if (null === $headerObjectOrString) {
             throw new UnauthorizedException("Missing Authorization header");
@@ -162,9 +162,9 @@ class Server implements ServerInterface
 
     public function authenticatePayload(
         CredentialsInterface $credentials,
-        $payload,
-        $contentType,
-        $hash
+        mixed $payload,
+        string $contentType,
+        string $hash
     ): bool {
         $calculatedHash = $this->crypto->calculatePayloadHash($payload, $credentials->algorithm(), $contentType);
 
@@ -172,9 +172,9 @@ class Server implements ServerInterface
     }
 
     public function authenticateBewit(
-        $host,
-        $port,
-        $resource
+        string $host,
+        int $port,
+        mixed $resource
     ): Response {
         // Measure now before any other processing
         $now = $this->timeProvider->createTimestamp() + $this->localtimeOffsetSec;
@@ -198,7 +198,7 @@ class Server implements ServerInterface
 
         [$id, $exp, $mac, $ext] = explode('\\', $bewit);
 
-        if ($exp < $now) {
+        if ((int)$exp < $now) {
             throw new UnauthorizedException('Access expired');
         }
 
@@ -212,7 +212,7 @@ class Server implements ServerInterface
             $host,
             $port,
             $resource,
-            $exp,
+            (int)$exp,
             '',
             $ext
         );

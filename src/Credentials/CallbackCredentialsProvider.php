@@ -4,6 +4,9 @@ namespace Dflydev\Hawk\Credentials;
 
 class CallbackCredentialsProvider implements CredentialsProviderInterface
 {
+    /**
+     * @param callable(string): CredentialsInterface $callback
+     */
     public function __construct(private $callback)
     {
     }

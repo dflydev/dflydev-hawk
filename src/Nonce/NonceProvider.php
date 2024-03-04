@@ -10,7 +10,7 @@ class NonceProvider implements NonceProviderInterface
     {
     }
 
-    public function createNonce()
+    public function createNonce(): string
     {
         return $this->generator->generateString(
             32,

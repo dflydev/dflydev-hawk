@@ -2,17 +2,14 @@
 
 namespace Dflydev\Hawk\Client;
 
-use InvalidArgumentException;
 use Dflydev\Hawk\Credentials\CredentialsInterface;
 use Dflydev\Hawk\Crypto\Artifacts;
 use Dflydev\Hawk\Crypto\Crypto;
 use Dflydev\Hawk\Header\HeaderFactory;
 use Dflydev\Hawk\Nonce\NonceProviderInterface;
 use Dflydev\Hawk\Time\TimeProviderInterface;
+use InvalidArgumentException;
 
-/**
- * @see \Dflydev\Hawk\Client\ClientTest
- */
 class Client implements ClientInterface
 {
     /**
@@ -22,18 +19,22 @@ class Client implements ClientInterface
         private readonly Crypto $crypto,
         private readonly TimeProviderInterface $timeProvider,
         private readonly NonceProviderInterface $nonceProvider,
-        private $localtimeOffset
+        private int $localtimeOffset
     ) {
     }
 
-    public function createRequest(CredentialsInterface $credentials, $uri, $method, array $options = []): Request
-    {
+    public function createRequest(
+        CredentialsInterface $credentials,
+        string $uri,
+        string $method,
+        array $options = []
+    ): Request {
         $timestamp = $options['timestamp'] ?? $this->timeProvider->createTimestamp();
         if ($this->localtimeOffset) {
             $timestamp += $this->localtimeOffset;
         }
 
-        $parsed = parse_url((string)$uri);
+        $parsed = parse_url($uri);
         $host = $parsed['host'];
         $resource = $parsed['path'] ?? '';
 
@@ -106,7 +107,7 @@ class Client implements ClientInterface
     public function authenticate(
         CredentialsInterface $credentials,
         Request $request,
-        $headerObjectOrString,
+        mixed $headerObjectOrString,
         array $options = []
     ): bool {
         $header = HeaderFactory::createFromHeaderObjectOrString(
@@ -169,14 +170,28 @@ class Client implements ClientInterface
         return $artifacts->hash() === $hash;
     }
 
-    public function createBewit(CredentialsInterface $credentials, $uri, $ttlSec, array $options = []): string
-    {
+    /**
+     * @param CredentialsInterface $credentials
+     * @param string $uri
+     * @param int $ttlSec
+     * @param array{
+     *     timestamp?: int,
+     *     ext?: string,
+     * } $options
+     * @return string
+     */
+    public function createBewit(
+        CredentialsInterface $credentials,
+        string $uri,
+        int $ttlSec,
+        array $options = []
+    ): string {
         $timestamp = $options['timestamp'] ?? $this->timeProvider->createTimestamp();
         if ($this->localtimeOffset) {
             $timestamp += $this->localtimeOffset;
         }
 
-        $parsed = parse_url((string)$uri);
+        $parsed = parse_url($uri);
         $host = $parsed['host'];
         $resource = $parsed['path'] ?? '';
 

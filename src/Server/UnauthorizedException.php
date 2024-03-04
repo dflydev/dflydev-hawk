@@ -8,16 +8,17 @@ use Dflydev\Hawk\Header\HeaderFactory;
 
 class UnauthorizedException extends Exception
 {
-    private array $attributes;
     private ?Header $header = null;
 
-    public function __construct($message = null, array $attributes = null)
+    /**
+     * @param array<string, string> $attributes
+     */
+    public function __construct(?string $message = null, private array $attributes = [])
     {
         parent::__construct($message);
-        $this->attributes = $attributes ?: [];
     }
 
-    public function getHeader()
+    public function getHeader(): Header
     {
         if (null !== $this->header) {
             return $this->header;

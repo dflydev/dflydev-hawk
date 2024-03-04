@@ -4,6 +4,9 @@ namespace Dflydev\Hawk\Header;
 
 class Header
 {
+    /**
+     * @param array<string, mixed> $attributes
+     */
     public function __construct(
         private string $fieldName,
         private string $fieldValue,
@@ -21,6 +24,10 @@ class Header
         return $this->fieldValue;
     }
 
+    /**
+     * @param string[]|null $keys
+     * @return array<string, mixed>
+     */
     public function attributes(array $keys = null): array
     {
         if (null === $keys) {
@@ -37,7 +44,7 @@ class Header
         return $attributes;
     }
 
-    public function attribute($key): ?string
+    public function attribute(string $key): mixed
     {
         return $this->attributes[$key] ?? null;
     }

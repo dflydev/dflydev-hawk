@@ -14,9 +14,9 @@ class ArtifactsTest extends TestCase
         $artifacts = new Artifacts(
             'testmethod',
             'testhost',
-            'testport',
+            80,
             'testresource',
-            'testtimestamp',
+            $time = time(),
             'testnonce',
             'testext',
             'testpayload',
@@ -28,9 +28,9 @@ class ArtifactsTest extends TestCase
 
         $this->assertSame('testmethod', $artifacts->method());
         $this->assertSame('testhost', $artifacts->host());
-        $this->assertSame('testport', $artifacts->port());
+        $this->assertSame(80, $artifacts->port());
         $this->assertSame('testresource', $artifacts->resource());
-        $this->assertSame('testtimestamp', $artifacts->timestamp());
+        $this->assertSame($time, $artifacts->timestamp());
         $this->assertSame('testnonce', $artifacts->nonce());
         $this->assertSame('testext', $artifacts->ext());
         $this->assertSame('testpayload', $artifacts->payload());

@@ -4,7 +4,10 @@ namespace Dflydev\Hawk\Header;
 
 class HeaderFactory
 {
-    public static function create($fieldName, array $attributes = null): Header
+    /**
+     * @param array<string, string>|null $attributes
+     */
+    public static function create(string $fieldName, array $attributes = null): Header
     {
         $fieldValue = 'Hawk';
 
@@ -22,7 +25,12 @@ class HeaderFactory
         return new Header($fieldName, $fieldValue, $attributes);
     }
 
-    public static function createFromString($fieldName, $fieldValue, array $requiredKeys = null): Header
+    /**
+     * @param string[]|null $requiredKeys
+     * @throws FieldValueParserException
+     * @throws NotHawkAuthorizationException
+     */
+    public static function createFromString(string $fieldName, string $fieldValue, array $requiredKeys = null): Header
     {
         return static::create(
             $fieldName,
@@ -30,8 +38,16 @@ class HeaderFactory
         );
     }
 
-    public static function createFromHeaderObjectOrString($fieldName, $headerObjectOrString, $onError)
-    {
+    /**
+     * @param callable(): void $onError
+     * @throws FieldValueParserException
+     * @throws NotHawkAuthorizationException
+     */
+    public static function createFromHeaderObjectOrString(
+        string $fieldName,
+        mixed $headerObjectOrString,
+        callable $onError
+    ): Header|string|null {
         if (is_string($headerObjectOrString)) {
             return static::createFromString($fieldName, $headerObjectOrString);
         } elseif ($headerObjectOrString instanceof Header) {

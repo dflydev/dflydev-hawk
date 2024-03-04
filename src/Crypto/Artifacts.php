@@ -8,77 +8,77 @@ namespace Dflydev\Hawk\Crypto;
 class Artifacts
 {
     public function __construct(
-        private $method,
-        private $host,
-        private $port,
-        private $resource,
-        private $timestamp,
-        private $nonce,
-        private $ext = null,
-        private $payload = null,
-        private $contentType = null,
-        private $hash = null,
-        private $app = null,
-        private $dlg = null
+        private string $method,
+        private string $host,
+        private int $port,
+        private mixed $resource,
+        private int $timestamp,
+        private string $nonce,
+        private ?string $ext = null,
+        private mixed $payload = null,
+        private ?string $contentType = null,
+        private ?string $hash = null,
+        private ?string $app = null,
+        private ?string $dlg = null
     ) {
     }
 
-    public function timestamp()
+    public function timestamp(): int
     {
         return $this->timestamp;
     }
 
-    public function nonce()
+    public function nonce(): string
     {
         return $this->nonce;
     }
 
-    public function ext()
+    public function ext(): ?string
     {
         return $this->ext;
     }
 
-    public function payload()
+    public function payload(): mixed
     {
         return $this->payload;
     }
 
-    public function contentType()
+    public function contentType(): string
     {
         return $this->contentType;
     }
 
-    public function hash()
+    public function hash(): ?string
     {
         return $this->hash;
     }
 
-    public function app()
+    public function app(): ?string
     {
         return $this->app;
     }
 
-    public function dlg()
+    public function dlg(): ?string
     {
         return $this->dlg;
     }
 
-    public function resource()
+    public function resource(): mixed
     {
         return $this->resource;
     }
 
-    public function host()
+    public function host(): string
     {
         return $this->host;
     }
 
-    public function port()
+    public function port(): int
     {
         return $this->port;
     }
 
-    public function method()
+    public function method(): string
     {
         return $this->method;
     }

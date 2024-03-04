@@ -4,14 +4,18 @@ namespace Dflydev\Hawk\Header;
 
 class HeaderParser
 {
-    public static function parseFieldValue($fieldValue, array $requiredKeys = null): array
+    /**
+     * @param string[]|null $requiredKeys
+     * @return array<string, string>
+     */
+    public static function parseFieldValue(string $fieldValue, array $requiredKeys = null): array
     {
-        if (!str_starts_with((string) $fieldValue, 'Hawk')) {
+        if (!str_starts_with($fieldValue, 'Hawk')) {
             throw new NotHawkAuthorizationException();
         }
 
         $attributes = [];
-        $fieldValue = substr((string) $fieldValue, 5);
+        $fieldValue = substr($fieldValue, 5);
         foreach (explode(', ', $fieldValue) as $part) {
             $equalsPos = strpos($part, '=');
             $key = substr($part, 0, $equalsPos);
