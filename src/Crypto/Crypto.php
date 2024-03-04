@@ -11,9 +11,9 @@ class Crypto
 {
     public const HEADER_VERSION = 1;
 
-    public function calculatePayloadHash(string $payload, string $algorithm, string $contentType): string
+    public function calculatePayloadHash(string $payload, string $algorithm, ?string $contentType): string
     {
-        [$contentType] = explode(';', $contentType);
+        [$contentType] = explode(';', $contentType ?? '');
         $contentType = strtolower(trim($contentType));
 
         $normalized = 'hawk.' . self::HEADER_VERSION . '.payload' . "\n" .

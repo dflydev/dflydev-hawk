@@ -43,7 +43,7 @@ class Artifacts
         return $this->payload;
     }
 
-    public function contentType(): string
+    public function contentType(): ?string
     {
         return $this->contentType;
     }

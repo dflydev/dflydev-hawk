@@ -22,7 +22,7 @@ class HeaderFactory
             }
         }
 
-        return new Header($fieldName, $fieldValue, $attributes);
+        return new Header($fieldName, $fieldValue, $attributes ?? []);
     }
 
     /**

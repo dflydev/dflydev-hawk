@@ -36,7 +36,7 @@ class ClientBuilder
         return $this;
     }
 
-    public function setLocaltimeOffset(int $localtimeOffset = null): static
+    public function setLocaltimeOffset(int $localtimeOffset): static
     {
         $this->localtimeOffset = $localtimeOffset;
 
