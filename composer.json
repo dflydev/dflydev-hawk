@@ -26,7 +26,7 @@
         }
     },
     "require": {
-        "ircmaxell/random-lib": "^1.0@dev",
+        "ircmaxell/random-lib": "^1.2",
         "php": "^8.2"
     },
     "require-dev": {
