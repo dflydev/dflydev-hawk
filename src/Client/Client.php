@@ -34,6 +34,7 @@ class Client implements ClientInterface
             $timestamp += $this->localtimeOffset;
         }
 
+        /** @var array{host: string, path?: string, query?: string, scheme: string, port?: int} $parsed */
         $parsed = parse_url($uri);
         $host = $parsed['host'];
         $resource = $parsed['path'] ?? '';
@@ -191,6 +192,7 @@ class Client implements ClientInterface
             $timestamp += $this->localtimeOffset;
         }
 
+        /** @var array{host: string, path?: string, query?: string, scheme: string, port?: int} $parsed */
         $parsed = parse_url($uri);
         $host = $parsed['host'];
         $resource = $parsed['path'] ?? '';

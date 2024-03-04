@@ -8,7 +8,7 @@ parameters:
   tmpDir: data/phpstan
   cache:
       nodesByStringCountMax: 0
-  level: 6
+  level: 7
   fileExtensions:
   	- php
   paths:

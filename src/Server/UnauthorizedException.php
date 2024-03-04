@@ -11,7 +11,7 @@ class UnauthorizedException extends Exception
     private ?Header $header = null;
 
     /**
-     * @param array<string, string> $attributes
+     * @param array<string, mixed> $attributes
      */
     public function __construct(?string $message = null, private array $attributes = [])
     {

@@ -46,6 +46,7 @@
     "scripts": {
         "check" : [
             "@cs-check",
+            "@phpstan",
             "@test"
         ],
         "cs-check" : "phpcs --parallel=50",

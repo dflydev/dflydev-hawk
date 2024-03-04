@@ -5,7 +5,7 @@ namespace Dflydev\Hawk\Header;
 class HeaderFactory
 {
     /**
-     * @param array<string, string>|null $attributes
+     * @param array<string, mixed>|null $attributes
      */
     public static function create(string $fieldName, array $attributes = null): Header
     {
@@ -39,7 +39,7 @@ class HeaderFactory
     }
 
     /**
-     * @param callable(): void $onError
+     * @param callable(): never $onError
      * @throws FieldValueParserException
      * @throws NotHawkAuthorizationException
      */
@@ -47,14 +47,13 @@ class HeaderFactory
         string $fieldName,
         mixed $headerObjectOrString,
         callable $onError
-    ): Header|string|null {
+    ): Header {
         if (is_string($headerObjectOrString)) {
             return static::createFromString($fieldName, $headerObjectOrString);
-        } elseif ($headerObjectOrString instanceof Header) {
-            return $headerObjectOrString;
-        } else {
-            call_user_func($onError);
         }
-        return null;
+        if ($headerObjectOrString instanceof Header) {
+            return $headerObjectOrString;
+        }
+        call_user_func($onError);
     }
 }
