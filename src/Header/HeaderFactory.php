@@ -4,7 +4,7 @@ namespace Dflydev\Hawk\Header;
 
 class HeaderFactory
 {
-    public static function create($fieldName, array $attributes = null)
+    public static function create($fieldName, array $attributes = null): Header
     {
         $fieldValue = 'Hawk';
 
@@ -22,7 +22,7 @@ class HeaderFactory
         return new Header($fieldName, $fieldValue, $attributes);
     }
 
-    public static function createFromString($fieldName, $fieldValue, array $requiredKeys = null)
+    public static function createFromString($fieldName, $fieldValue, array $requiredKeys = null): Header
     {
         return static::create(
             $fieldName,

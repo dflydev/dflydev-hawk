@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 class ArtifactsTest extends TestCase
 {
     #[Test]
-    public function shouldReturnCorrectValuesForAllFields()
+    public function shouldReturnCorrectValuesForAllFields(): void
     {
         $artifacts = new Artifacts(
             'testmethod',

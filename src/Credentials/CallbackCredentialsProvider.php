@@ -8,7 +8,7 @@ class CallbackCredentialsProvider implements CredentialsProviderInterface
     {
     }
 
-    public function loadCredentialsById($id)
+    public function loadCredentialsById(string $id): CredentialsInterface
     {
         return call_user_func($this->callback, $id);
     }

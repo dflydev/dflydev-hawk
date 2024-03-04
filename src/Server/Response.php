@@ -13,12 +13,12 @@ class Response
     ) {
     }
 
-    public function credentials()
+    public function credentials(): CredentialsInterface
     {
         return $this->credentials;
     }
 
-    public function artifacts()
+    public function artifacts(): Artifacts
     {
         return $this->artifacts;
     }

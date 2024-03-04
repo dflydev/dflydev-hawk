@@ -10,40 +10,40 @@ use Dflydev\Hawk\Time\TimeProviderInterface;
 
 class ClientBuilder
 {
-    private $crypto;
-    private $timeProvider;
-    private $nonceProvider;
-    private $localtimeOffset = 0;
+    private ?Crypto $crypto = null;
+    private ?TimeProviderInterface $timeProvider = null;
+    private ?NonceProviderInterface $nonceProvider = null;
+    private int $localtimeOffset = 0;
 
-    public function setCrypto(Crypto $crypto)
+    public function setCrypto(Crypto $crypto): static
     {
         $this->crypto = $crypto;
 
         return $this;
     }
 
-    public function setTimeProvider(TimeProviderInterface $timeProvider)
+    public function setTimeProvider(TimeProviderInterface $timeProvider): static
     {
         $this->timeProvider = $timeProvider;
 
         return $this;
     }
 
-    public function setNonceProvider(NonceProviderInterface $nonceProvider)
+    public function setNonceProvider(NonceProviderInterface $nonceProvider): static
     {
         $this->nonceProvider = $nonceProvider;
 
         return $this;
     }
 
-    public function setLocaltimeOffset($localtimeOffset = null)
+    public function setLocaltimeOffset(int $localtimeOffset = null): static
     {
         $this->localtimeOffset = $localtimeOffset;
 
         return $this;
     }
 
-    public function build()
+    public function build(): Client
     {
         $crypto = $this->crypto ?: new Crypto();
         $timeProvider = $this->timeProvider ?: DefaultTimeProviderFactory::create();
@@ -57,7 +57,7 @@ class ClientBuilder
         );
     }
 
-    public static function create()
+    public static function create(): static
     {
         return new static();
     }

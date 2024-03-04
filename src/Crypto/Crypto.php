@@ -11,7 +11,7 @@ class Crypto
 {
     public const HEADER_VERSION = 1;
 
-    public function calculatePayloadHash($payload, $algorithm, $contentType)
+    public function calculatePayloadHash(string $payload, $algorithm, $contentType): string
     {
         [$contentType] = explode(';', (string) $contentType);
         $contentType = strtolower(trim($contentType));
@@ -23,34 +23,34 @@ class Crypto
         return base64_encode(hash((string) $algorithm, $normalized, true));
     }
 
-    public function calculateMac($type, CredentialsInterface $credentials, Artifacts $attributes)
+    public function calculateMac(string $type, CredentialsInterface $credentials, Artifacts $attributes): string
     {
         $normalized = $this->generateNormalizedString($type, $attributes);
 
         return base64_encode(
             hash_hmac(
-                (string) $credentials->algorithm(),
-                (string) $normalized,
-                (string) $credentials->key(),
+                $credentials->algorithm(),
+                $normalized,
+                $credentials->key(),
                 true
             )
         );
     }
 
-    public function calculateTsMac($ts, CredentialsInterface $credentials)
+    public function calculateTsMac(int $timestamp, CredentialsInterface $credentials): string
     {
         $normalized = 'hawk.' . self::HEADER_VERSION . '.ts' . "\n" .
-            $ts . "\n";
+            $timestamp . "\n";
 
         return base64_encode(hash_hmac(
-            (string) $credentials->algorithm(),
+            $credentials->algorithm(),
             $normalized,
-            (string) $credentials->key(),
+            $credentials->key(),
             true
         ));
     }
 
-    public function fixedTimeComparison($a, $b)
+    public function fixedTimeComparison($a, $b): bool
     {
         $mismatch = strlen((string) $a) === strlen((string) $b) ? 0 : 1;
         if ($mismatch !== 0) {
@@ -66,7 +66,7 @@ class Crypto
         return (0 === $mismatch);
     }
 
-    private function generateNormalizedString($type, Artifacts $attributes)
+    private function generateNormalizedString(string $type, Artifacts $attributes): string
     {
         $normalized = 'hawk.' . self::HEADER_VERSION . '.' . $type . "\n" .
             $attributes->timestamp() . "\n" .

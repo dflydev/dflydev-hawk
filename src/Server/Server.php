@@ -2,53 +2,29 @@
 
 namespace Dflydev\Hawk\Server;
 
-use Dflydev\Hawk\Credentials\CallbackCredentialsProvider;
 use Dflydev\Hawk\Credentials\CredentialsInterface;
 use Dflydev\Hawk\Credentials\CredentialsProviderInterface;
 use Dflydev\Hawk\Crypto\Artifacts;
 use Dflydev\Hawk\Crypto\Crypto;
+use Dflydev\Hawk\Header\Header;
 use Dflydev\Hawk\Header\HeaderFactory;
-use Dflydev\Hawk\Nonce\CallbackNonceValidator;
 use Dflydev\Hawk\Nonce\NonceValidatorInterface;
 use Dflydev\Hawk\Time\TimeProviderInterface;
+use InvalidArgumentException;
 
 /**
  * @see \Dflydev\Hawk\Server\ServerTest
  */
 class Server implements ServerInterface
 {
-    private $credentialsProvider;
-    private $nonceValidator;
-
     public function __construct(
         private readonly Crypto $crypto,
-        $credentialsProvider,
+        private readonly CredentialsProviderInterface $credentialsProvider,
         private readonly TimeProviderInterface $timeProvider,
-        $nonceValidator,
-        private $timestampSkewSec,
-        private $localtimeOffsetSec
+        private readonly NonceValidatorInterface $nonceValidator,
+        private int $timestampSkewSec,
+        private int $localtimeOffsetSec
     ) {
-        if (!$credentialsProvider instanceof CredentialsProviderInterface) {
-            if (is_callable($credentialsProvider)) {
-                $credentialsProvider = new CallbackCredentialsProvider($credentialsProvider);
-            } else {
-                throw new \InvalidArgumentException(
-                    "Credentials provider must implement CredentialsProviderInterface or must be callable"
-                );
-            }
-        }
-
-        if (!$nonceValidator instanceof NonceValidatorInterface) {
-            if (is_callable($nonceValidator)) {
-                $nonceValidator = new CallbackNonceValidator($nonceValidator);
-            } else {
-                throw new \InvalidArgumentException(
-                    "Nonce validator must implement NonceValidatorInterface or must be callable"
-                );
-            }
-        }
-        $this->credentialsProvider = $credentialsProvider;
-        $this->nonceValidator = $nonceValidator;
     }
 
     public function authenticate(
@@ -59,7 +35,7 @@ class Server implements ServerInterface
         $contentType = null,
         $payload = null,
         $headerObjectOrString = null
-    ) {
+    ): Response {
         if (null === $headerObjectOrString) {
             throw new UnauthorizedException("Missing Authorization header");
         }
@@ -136,7 +112,7 @@ class Server implements ServerInterface
         return new Response($credentials, $artifacts);
     }
 
-    public function createHeader(CredentialsInterface $credentials, Artifacts $artifacts, array $options = [])
+    public function createHeader(CredentialsInterface $credentials, Artifacts $artifacts, array $options = []): Header
     {
         if (isset($options['payload']) || isset($options['content_type'])) {
             if (isset($options['payload']) && isset($options['content_type'])) {
@@ -144,7 +120,7 @@ class Server implements ServerInterface
                 $contentType = $options['content_type'];
                 $hash = $this->crypto->calculatePayloadHash($payload, $credentials->algorithm(), $contentType);
             } else {
-                throw new \InvalidArgumentException(
+                throw new InvalidArgumentException(
                     "If one of 'payload' and 'content_type' are specified, both must be specified."
                 );
             }
@@ -189,7 +165,7 @@ class Server implements ServerInterface
         $payload,
         $contentType,
         $hash
-    ) {
+    ): bool {
         $calculatedHash = $this->crypto->calculatePayloadHash($payload, $credentials->algorithm(), $contentType);
 
         return $this->crypto->fixedTimeComparison($calculatedHash, $hash);
@@ -199,7 +175,7 @@ class Server implements ServerInterface
         $host,
         $port,
         $resource
-    ) {
+    ): Response {
         // Measure now before any other processing
         $now = $this->timeProvider->createTimestamp() + $this->localtimeOffsetSec;
 

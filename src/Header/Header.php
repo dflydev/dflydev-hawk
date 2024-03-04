@@ -5,23 +5,23 @@ namespace Dflydev\Hawk\Header;
 class Header
 {
     public function __construct(
-        private $fieldName,
-        private $fieldValue,
+        private string $fieldName,
+        private string $fieldValue,
         private array $attributes = []
     ) {
     }
 
-    public function fieldName()
+    public function fieldName(): string
     {
         return $this->fieldName;
     }
 
-    public function fieldValue()
+    public function fieldValue(): string
     {
         return $this->fieldValue;
     }
 
-    public function attributes(array $keys = null)
+    public function attributes(array $keys = null): array
     {
         if (null === $keys) {
             return $this->attributes;
@@ -37,12 +37,8 @@ class Header
         return $attributes;
     }
 
-    public function attribute($key)
+    public function attribute($key): ?string
     {
-        if (isset($this->attributes[$key])) {
-            return $this->attributes[$key];
-        }
-
-        return null;
+        return $this->attributes[$key] ?? null;
     }
 }

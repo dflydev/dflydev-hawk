@@ -11,12 +11,12 @@ class Request
     {
     }
 
-    public function header()
+    public function header(): Header
     {
         return $this->header;
     }
 
-    public function artifacts()
+    public function artifacts(): Artifacts
     {
         return $this->artifacts;
     }

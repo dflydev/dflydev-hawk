@@ -7,6 +7,9 @@ use Rector\PHPUnit\Set\PHPUnitSetList;
 use Rector\Set\ValueObject\DowngradeLevelSetList;
 use Rector\Set\ValueObject\LevelSetList;
 use Rector\Set\ValueObject\SetList;
+use Rector\TypeDeclaration\Rector\ClassMethod\AddParamTypeDeclarationRector;
+use Rector\TypeDeclaration\Rector\ClassMethod\AddReturnTypeDeclarationRector;
+use Rector\TypeDeclaration\Rector\Property\AddPropertyTypeDeclarationRector;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->paths(
@@ -23,6 +26,9 @@ return static function (RectorConfig $rectorConfig): void {
             LevelSetList::UP_TO_PHP_81,
             DowngradeLevelSetList::DOWN_TO_PHP_81,
             SetList::CODE_QUALITY,
+            SetList::TYPE_DECLARATION,
         ]
     );
+
+    $rectorConfig->importNames();
 };

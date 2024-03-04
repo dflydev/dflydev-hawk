@@ -4,5 +4,5 @@ namespace Dflydev\Hawk\Credentials;
 
 interface CredentialsProviderInterface
 {
-    public function loadCredentialsById($id);
+    public function loadCredentialsById(string $id): CredentialsInterface;
 }

@@ -2,12 +2,14 @@
 
 namespace Dflydev\Hawk\Server;
 
+use Exception;
+use Dflydev\Hawk\Header\Header;
 use Dflydev\Hawk\Header\HeaderFactory;
 
-class UnauthorizedException extends \Exception
+class UnauthorizedException extends Exception
 {
-    private $attributes;
-    private $header;
+    private array $attributes;
+    private ?Header $header = null;
 
     public function __construct($message = null, array $attributes = null)
     {

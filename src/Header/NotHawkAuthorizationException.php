@@ -2,7 +2,9 @@
 
 namespace Dflydev\Hawk\Header;
 
-class NotHawkAuthorizationException extends \Exception
+use Exception;
+
+class NotHawkAuthorizationException extends Exception
 {
     public function __construct()
     {

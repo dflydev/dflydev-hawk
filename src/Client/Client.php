@@ -2,6 +2,7 @@
 
 namespace Dflydev\Hawk\Client;
 
+use InvalidArgumentException;
 use Dflydev\Hawk\Credentials\CredentialsInterface;
 use Dflydev\Hawk\Crypto\Artifacts;
 use Dflydev\Hawk\Crypto\Crypto;
@@ -25,7 +26,7 @@ class Client implements ClientInterface
     ) {
     }
 
-    public function createRequest(CredentialsInterface $credentials, $uri, $method, array $options = [])
+    public function createRequest(CredentialsInterface $credentials, $uri, $method, array $options = []): Request
     {
         $timestamp = $options['timestamp'] ?? $this->timeProvider->createTimestamp();
         if ($this->localtimeOffset) {
@@ -50,7 +51,7 @@ class Client implements ClientInterface
                 $contentType = $options['content_type'];
                 $hash = $this->crypto->calculatePayloadHash($payload, $credentials->algorithm(), $contentType);
             } else {
-                throw new \InvalidArgumentException(
+                throw new InvalidArgumentException(
                     "If one of 'payload' and 'content_type' are specified, both must be specified."
                 );
             }
@@ -107,12 +108,12 @@ class Client implements ClientInterface
         Request $request,
         $headerObjectOrString,
         array $options = []
-    ) {
+    ): bool {
         $header = HeaderFactory::createFromHeaderObjectOrString(
             'Server-Authorization',
             $headerObjectOrString,
             function (): never {
-                throw new \InvalidArgumentException(
+                throw new InvalidArgumentException(
                     'Header must either be a string or an instance of "Dflydev\Hawk\Header\Header"'
                 );
             }
@@ -123,7 +124,7 @@ class Client implements ClientInterface
                 $payload = $options['payload'];
                 $contentType = $options['content_type'];
             } else {
-                throw new \InvalidArgumentException(
+                throw new InvalidArgumentException(
                     'If one of "payload" and "content_type" are specified, both must be specified.'
                 );
             }
@@ -168,7 +169,7 @@ class Client implements ClientInterface
         return $artifacts->hash() === $hash;
     }
 
-    public function createBewit(CredentialsInterface $credentials, $uri, $ttlSec, array $options = [])
+    public function createBewit(CredentialsInterface $credentials, $uri, $ttlSec, array $options = []): string
     {
         $timestamp = $options['timestamp'] ?? $this->timeProvider->createTimestamp();
         if ($this->localtimeOffset) {

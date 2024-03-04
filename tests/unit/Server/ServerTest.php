@@ -11,9 +11,9 @@ use PHPUnit\Framework\TestCase;
 class ServerTest extends TestCase
 {
     #[Test]
-    public function shouldAuthenticateBewit()
+    public function shouldAuthenticateBewit(): void
     {
-        $credentialsProvider = fn($id) => new Credentials(
+        $credentialsProvider = fn($id): Credentials => new Credentials(
             'HX9QcbD-r3ItFEnRcAuOSg',
             'sha256',
             'exqbZWtykFZIh2D7cXi9dA'

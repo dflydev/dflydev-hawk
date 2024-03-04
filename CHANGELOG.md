@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Breaking Changes
 
 - PHP 8.1 is now required
+- All class properties and function parameters are now typed
 
 ### Fixed
 

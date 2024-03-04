@@ -8,7 +8,7 @@ class ConstantTimeProvider implements TimeProviderInterface
     {
     }
 
-    public function createTimestamp()
+    public function createTimestamp(): int
     {
         return $this->time;
     }

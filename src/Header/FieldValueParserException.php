@@ -2,6 +2,8 @@
 
 namespace Dflydev\Hawk\Header;
 
-class FieldValueParserException extends \Exception
+use Exception;
+
+class FieldValueParserException extends Exception
 {
 }

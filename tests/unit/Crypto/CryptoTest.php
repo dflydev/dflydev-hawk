@@ -16,11 +16,11 @@ class CryptoTest extends TestCase
     #[Test]
     #[DataProvider('payloadDataProvider')]
     public function shouldCalculatePayloadHash(
-        $expectedHash,
-        $payload,
-        $algorithm,
-        $contentType
-    ) {
+        string $expectedHash,
+        string $payload,
+        string $algorithm,
+        string $contentType
+    ): void {
         $crypto = new Crypto();
 
         $calculatedHash = $crypto->calculatePayloadHash(
@@ -29,7 +29,7 @@ class CryptoTest extends TestCase
             $contentType
         );
 
-        $this->assertEquals($expectedHash, $calculatedHash);
+        $this->assertSame($expectedHash, $calculatedHash);
     }
 
     public static function payloadDataProvider(): Generator
@@ -45,16 +45,16 @@ class CryptoTest extends TestCase
     #[Test]
     #[DataProvider('macDataProvider')]
     public function shouldCalculateMac(
-        $expectedMac,
-        $type,
+        string $expectedMac,
+        string $type,
         CredentialsInterface $credentials,
         Artifacts $artifacts
-    ) {
+    ): void {
         $crypto = new Crypto();
 
         $calculatedMac = $crypto->calculateMac($type, $credentials, $artifacts);
 
-        $this->assertEquals($expectedMac, $calculatedMac);
+        $this->assertSame($expectedMac, $calculatedMac);
     }
 
     public static function macDataProvider(): Generator
@@ -175,15 +175,15 @@ class CryptoTest extends TestCase
     #[Test]
     #[DataProvider('tsMacDataProvider')]
     public function shouldCalculateTsMac(
-        $expectedTsMac,
-        $ts,
+        string $expectedTsMac,
+        int $ts,
         CredentialsInterface $credentials
-    ) {
+    ): void {
         $crypto = new Crypto();
 
         $calculatedTsMac = $crypto->calculateTsMac($ts, $credentials);
 
-        $this->assertEquals($expectedTsMac, $calculatedTsMac);
+        $this->assertSame($expectedTsMac, $calculatedTsMac);
     }
 
     public static function tsMacDataProvider(): Generator

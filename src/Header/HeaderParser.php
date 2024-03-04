@@ -4,7 +4,7 @@ namespace Dflydev\Hawk\Header;
 
 class HeaderParser
 {
-    public static function parseFieldValue($fieldValue, array $requiredKeys = null)
+    public static function parseFieldValue($fieldValue, array $requiredKeys = null): array
     {
         if (!str_starts_with((string) $fieldValue, 'Hawk')) {
             throw new NotHawkAuthorizationException();
