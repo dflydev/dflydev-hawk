@@ -27,7 +27,7 @@ without setting anything to get sane defaults.
 <?php
 
 // Simple example
-$client = Dflydev\Hawk\Client\ClientBuilder::create()
+$client = \Dflydev\Hawk\Client\ClientBuilder::create()
     ->build()
 ```
 
@@ -37,7 +37,7 @@ $client = Dflydev\Hawk\Client\ClientBuilder::create()
 <?php
 
 // A complete example
-$client = Dflydev\Hawk\Client\ClientBuilder::create()
+$client = \Dflydev\Hawk\Client\ClientBuilder::create()
     ->setCrypto($crypto)
     ->setTimeProvider($timeProvider)
     ->setNonceProvider($nonceProvider)
@@ -142,14 +142,14 @@ $isAuthenticatedResponse = $client->authenticate(
 <?php
 
 // Create a set of Hawk credentials
-$credentials = new Dflydev\Hawk\Credentials\Credentials(
+$credentials = new \Dflydev\Hawk\Credentials\Credentials(
     'afe89a3x',  // shared key
     'sha256',    // default: sha256
     '12345'      // identifier, default: null
 );
 
 // Create a Hawk client
-$client = Dflydev\Hawk\Client\ClientBuilder::create()
+$client = \Dflydev\Hawk\Client\ClientBuilder::create()
     ->build();
 
 // Create a Hawk request based on making a POST request to a specific URL
@@ -239,7 +239,7 @@ without setting anything but the credentials provider to get sane defaults.
 
 $credentialsProvider = function ($id) {
     if ('12345' === $id) {
-        return new Dflydev\Hawk\Credentials\Credentials(
+        return new \Dflydev\Hawk\Credentials\Credentials(
             'afe89a3x',  // shared key
             'sha256',    // default: sha256
             '12345'      // identifier, default: null
@@ -248,7 +248,7 @@ $credentialsProvider = function ($id) {
 };
 
 // Simple example
-$server = Dflydev\Hawk\Server\ServerBuilder::create($credentialsProvider)
+$server = \Dflydev\Hawk\Server\ServerBuilder::create($credentialsProvider)
     ->build()
 ```
 
@@ -259,7 +259,7 @@ $server = Dflydev\Hawk\Server\ServerBuilder::create($credentialsProvider)
 
 $credentialsProvider = function ($id) {
     if ('12345' === $id) {
-        return new Dflydev\Hawk\Credentials\Credentials(
+        return new \Dflydev\Hawk\Credentials\Credentials(
             'afe89a3x',  // shared key
             'sha256',    // default: sha256
             '12345'      // identifier, default: null
@@ -268,7 +268,7 @@ $credentialsProvider = function ($id) {
 };
 
 // A complete example
-$server = Dflydev\Hawk\Server\ServerBuilder::create($credentialsProvider)
+$server = \Dflydev\Hawk\Server\ServerBuilder::create($credentialsProvider)
     ->setCrypto($crypto)
     ->setTimeProvider($timeProvider)
     ->setNonceValidator($nonceValidator)
@@ -307,7 +307,7 @@ try {
         'hello world!'
         $authorization
     );
-} catch(Dflydev\Hawk\Server\UnauthorizedException $e) {
+} catch(\Dflydev\Hawk\Server\UnauthorizedException $e) {
     // If authorization is incorrect (invalid mac, etc.) we can catch an
     // unauthorized exception.
     throw $e;
@@ -367,7 +367,7 @@ header(sprintf("%s: %s", $header->fieldName(), $header->fieldValue()));
 // Create a simple credentials provider
 $credentialsProvider = function ($id) {
     if ('12345' === $id) {
-        return new Dflydev\Hawk\Credentials\Credentials(
+        return new \Dflydev\Hawk\Credentials\Credentials(
             'afe89a3x',  // shared key
             'sha256',    // default: sha256
             '12345'      // identifier, default: null
@@ -376,7 +376,7 @@ $credentialsProvider = function ($id) {
 };
 
 // Create a Hawk server
-$server = Dflydev\Hawk\Server\ServerBuilder::create($credentialsProvider)
+$server = \Dflydev\Hawk\Server\ServerBuilder::create($credentialsProvider)
     ->build()
 
 // Get the authorization header for the request; it should be in the form
@@ -393,7 +393,7 @@ try {
         'hello world!'
         $authorization
     );
-} catch(Dflydev\Hawk\Server\UnauthorizedException $e) {
+} catch(\Dflydev\Hawk\Server\UnauthorizedException $e) {
     // If authorization is incorrect (invalid mac, etc.) we can catch an
     // unauthorized exception.
     throw $e;
@@ -487,7 +487,7 @@ A simple implementation of `CredentialsInterface`.
 ```php
 <?php
 
-$credentials = new Dflydev\Hawk\Credentials\Credentials(
+$credentials = new \Dflydev\Hawk\Credentials\Credentials(
     $key,        // shared key
     $algorithm,  // default: sha256
     $id          // identifier, default: null

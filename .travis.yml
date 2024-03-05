@@ -1,11 +1,9 @@
 language: php
 
 php:
-  - 5.3
-  - 5.4
-  - 5.5
-  - 5.6
-  - 7
+  - 8.1
+  - 8.2
+  - 8.3
   - hhvm
 
 cache:
@@ -22,8 +20,7 @@ before_script:
   - composer install --dev --prefer-source
 
 script:
-  - ./vendor/bin/phpunit --coverage-clover=coverage.clover
-  - ./vendor/bin/phpcs --standard=PSR2 src
+  - composer check
 
 after_script:
   - wget https://scrutinizer-ci.com/ocular.phar
